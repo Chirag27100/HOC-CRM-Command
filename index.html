@@ -3009,6 +3009,32 @@ if (el) el.textContent = h < 12 ? 'Good morning, Chirag' : h < 17 ? 'Good aftern
   .ret-notes-area { width: 100%; background: var(--cream); border: 1.5px solid var(--black-s); border-radius: 7px; padding: 10px 12px; font-size: 13px; font-family: var(--ff-sans); color: var(--black-s); resize: vertical; min-height: 80px; outline: none; }
   .ret-inline-input { background: var(--cream); border: 1.5px solid var(--black-s); border-radius: 5px; padding: 3px 8px; font-size: 13px; font-family: var(--ff-mono); color: var(--black-s); outline: none; width: 100%; max-width: 200px; text-align: right; }
 
+  /* ── SOW / TIMELINE / INVOICES / FEEDBACK ── */
+  .sow-col { background:var(--card); border:1px solid var(--border-l); border-radius:10px; padding:16px 18px; }
+  .timeline-dot { width:16px; height:16px; border-radius:50%; flex-shrink:0; border:2px solid white; margin-top:10px; z-index:1; }
+  .inv-status-badge { font-size:10px; font-weight:700; padding:3px 9px; border-radius:20px; cursor:pointer; white-space:nowrap; }
+  .fb-score-box { width:52px; height:52px; border-radius:10px; display:flex; align-items:center; justify-content:center; flex-direction:column; flex-shrink:0; }
+  .score-btn { width:38px; height:38px; border-radius:8px; border:1px solid var(--border); font-weight:700; font-size:13px; cursor:pointer; font-family:var(--ff-serif); transition:all 0.12s; }
+  .score-btn:hover { border-color:var(--black-s); }
+
+  /* ── NOTES & MEETINGS ── */
+  .notes-ta { width:100%; background:var(--card); border:1px solid var(--border-l); border-radius:10px; padding:20px; font-family:var(--ff-sans); font-size:13px; color:var(--black-s); line-height:1.8; resize:vertical; min-height:340px; outline:none; box-sizing:border-box; }
+  .notes-ta:focus { border-color:var(--black-s); }
+  .meeting-card { background:var(--card); border:1px solid var(--border-l); border-radius:10px; padding:18px 20px; margin-bottom:12px; }
+  .meeting-card-past { opacity:0.8; }
+  .meeting-title { font-size:14px; font-weight:700; color:var(--black-s); margin-bottom:3px; }
+  .meeting-meta { font-size:11px; color:var(--ink-muted); font-family:var(--ff-mono); }
+  .meeting-section-lbl { font-size:9px; font-weight:700; color:var(--ink-muted); letter-spacing:0.1em; text-transform:uppercase; margin-bottom:4px; }
+  .meeting-discussed { font-size:12px; color:var(--ink-mid); line-height:1.7; white-space:pre-wrap; cursor:pointer; border-bottom:1px dashed var(--border); min-height:18px; }
+  .meeting-discussed:hover { border-color:var(--ink-mid); }
+  .meeting-actions-row { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
+  .btn-cancel { background:transparent; border:1px solid var(--border); border-radius:6px; padding:7px 14px; font-size:12px; color:var(--ink-muted); cursor:pointer; font-family:var(--ff-sans); transition:all 0.12s; }
+  .btn-cancel:hover { border-color:var(--ink-mid); color:var(--black-s); }
+  /* access card overhaul */
+  .access-card-hdr { display:flex; justify-content:space-between; align-items:center; padding:13px 18px; border-bottom:1px solid var(--border-l); background:var(--cream-d); }
+  .access-cred-cell { background:var(--cream-d); border-radius:8px; padding:10px 14px; }
+  .access-cred-lbl { font-size:9px; font-weight:700; color:var(--ink-muted); letter-spacing:0.1em; text-transform:uppercase; margin-bottom:5px; }
+
   /* ── MODALS ── */
   .modal-overlay { position: fixed; inset: 0; background: rgba(15,13,11,0.55); display: flex; align-items: center; justify-content: center; z-index: 200; }
   .modal-box { background: var(--cream); border: 1px solid var(--border); border-radius: 14px; padding: 28px; width: 580px; max-height: 88vh; overflow-y: auto; }
@@ -3127,8 +3153,14 @@ if (el) el.textContent = h < 12 ? 'Good morning, Chirag' : h < 17 ? 'Good aftern
       <div class="del-strip" id="rec-del-strip"></div>
       <div class="rec-tabs">
         <button class="rec-tab active" data-tab="overview">Overview</button>
+        <button class="rec-tab" data-tab="notes">Notes</button>
+        <button class="rec-tab" data-tab="meetings">Meetings</button>
+        <button class="rec-tab" data-tab="sow">SOW</button>
+        <button class="rec-tab" data-tab="timeline">Timeline</button>
+        <button class="rec-tab" data-tab="invoices">Invoices</button>
+        <button class="rec-tab" data-tab="feedback">Feedback</button>
         <button class="rec-tab" data-tab="deliverables">Deliverables</button>
-        <button class="rec-tab" data-tab="remarks">Remarks</button>
+        <button class="rec-tab" data-tab="remarks">Activity</button>
         <button class="rec-tab" data-tab="access">Access</button>
         <button class="rec-tab retainer-tab" data-tab="retainer">Retainer</button>
       </div>
@@ -3346,7 +3378,13 @@ const toRow = c => ({
   deal_value: c.dealValue, amount_paid: c.amountPaid,
   contract_notes: c.contractNotes, deliverables: c.deliverables,
   access: c.access, remarks: c.remarks, upsells: c.upsells,
-  retainer: c.retainer
+  retainer: c.retainer,
+  client_notes: c.clientNotes,
+  meetings: c.meetings,
+  sow: c.sow,
+  feedback: c.feedback,
+  milestones: c.milestones,
+  invoices: c.invoices
 });
 
 const fromRow = r => r ? ({
@@ -3357,7 +3395,13 @@ const fromRow = r => r ? ({
   dealValue: r.deal_value, amountPaid: r.amount_paid,
   contractNotes: r.contract_notes, deliverables: r.deliverables||[],
   access: r.access||[], remarks: r.remarks||[], upsells: r.upsells||[],
-  retainer: r.retainer || defaultRetainer()
+  retainer: r.retainer || defaultRetainer(),
+  clientNotes: r.client_notes || "",
+  meetings: r.meetings || [],
+  sow: r.sow || { included:[], excluded:[], revisions:3, revisionNotes:"", scopeNotes:"" },
+  feedback: r.feedback || [],
+  milestones: r.milestones || [],
+  invoices: r.invoices || []
 }) : null;
 
 function defaultRetainer() {
@@ -3416,6 +3460,7 @@ let selected = null;
 let currentTab = "overview";
 let selectedServices = [];
 let searchQuery = "";
+let _editingHeader = false; // freeze-fix guard
 
 // ═══════════════════════════════════════════════
 // HEALTH & STATUS
@@ -3551,7 +3596,9 @@ function saveField(clientId, fieldName, value) {
   pendingPatches[clientId][fieldName] = value;
 
   renderSidebar();
-  renderRecord();
+  // Only re-render the full record if we are NOT mid-edit in the header
+  // (header edits set _editingHeader=true to prevent DOM destruction)
+  if (!_editingHeader) renderRecord();
   $("rec-saving-pill").style.display = "inline-flex";
 
   clearTimeout(patchTimer);
@@ -3563,8 +3610,11 @@ function saveField(clientId, fieldName, value) {
         await db.patch(id, fields);
       }
       showToast("Saved ✓");
+      // Now safe to re-render — no input is active
+      if (_editingHeader) { _editingHeader = false; renderRecord(); }
     } catch(e) {
       showToast("Save failed: " + e.message);
+      _editingHeader = false;
     } finally {
       $("rec-saving-pill").style.display = "none";
     }
@@ -3579,7 +3629,13 @@ function deepSet(client, field, value) {
     contract_notes:"contractNotes", deliverables:"deliverables",
     access:"access", remarks:"remarks", upsells:"upsells",
     status:"status", account_manager:"accountManager",
-    retainer:"retainer"
+    retainer:"retainer",
+    client_notes:"clientNotes",
+    meetings:"meetings",
+    sow:"sow",
+    feedback:"feedback",
+    milestones:"milestones",
+    invoices:"invoices"
   };
   const jsKey = colMap[field] || field;
   return { ...client, [jsKey]: value };
@@ -3662,14 +3718,8 @@ function renderRecord() {
 
   const dealEl = $("rec-deal");
   dealEl.textContent = inr(c.dealValue);
-  dealEl.style.cursor = "pointer";
-  dealEl.onclick = () => {
-    const inp = document.createElement("input"); inp.type="number"; inp.value=c.dealValue;
-    inp.style.cssText = "background:rgba(255,255,255,0.1);border:1.5px solid rgba(240,236,226,0.5);border-radius:6px;padding:2px 8px;font-size:22px;font-family:var(--ff-serif);font-weight:600;color:var(--cream);outline:none;width:150px;text-align:right";
-    dealEl.replaceWith(inp); inp.focus(); inp.select();
-    const commit=()=>saveField(c.id,"deal_value",parseInt(inp.value)||c.dealValue);
-    inp.addEventListener("blur",commit); inp.addEventListener("keydown",e=>{ if(e.key==="Enter")commit(); if(e.key==="Escape"){inp.replaceWith(dealEl);} });
-  };
+  dealEl.style.cursor = "default";
+  dealEl.onclick = null;
 
   const payBarWrap = $("rec-pay-bar-wrap");
   payBarWrap.innerHTML = "";
@@ -3677,14 +3727,8 @@ function renderRecord() {
 
   const recPaidEl = $("rec-paid");
   recPaidEl.textContent = inr(c.amountPaid)+" paid";
-  recPaidEl.style.cursor = "pointer";
-  recPaidEl.onclick = () => {
-    const inp = document.createElement("input"); inp.type="number"; inp.value=c.amountPaid;
-    inp.style.cssText = "background:rgba(255,255,255,0.1);border:1.5px solid rgba(240,236,226,0.4);border-radius:5px;padding:2px 6px;font-size:11px;font-family:var(--ff-mono);color:var(--cream);outline:none;width:110px";
-    recPaidEl.replaceWith(inp); inp.focus(); inp.select();
-    const commit=()=>saveField(c.id,"amount_paid",Math.min(parseInt(inp.value)||0,c.dealValue));
-    inp.addEventListener("blur",commit); inp.addEventListener("keydown",e=>{ if(e.key==="Enter")commit(); if(e.key==="Escape"){inp.replaceWith(recPaidEl);} });
-  };
+  recPaidEl.style.cursor = "default";
+  recPaidEl.onclick = null;
 
   if (rem > 0) { $("rec-due").textContent=inr(rem)+" due"; $("rec-due").style.color="rgba(192,57,43,0.9)"; }
   else         { $("rec-due").textContent="✓ cleared"; $("rec-due").style.color="rgba(22,101,52,0.9)"; }
@@ -3762,7 +3806,13 @@ function renderTab() {
   const c = selected;
   const content = $("rec-content");
   content.innerHTML = "";
-  if (currentTab==="overview")     renderOverview(c, content);
+  if      (currentTab==="overview")     renderOverview(c, content);
+  else if (currentTab==="notes")        renderNotes(c, content);
+  else if (currentTab==="meetings")     renderMeetings(c, content);
+  else if (currentTab==="sow")          renderSOW(c, content);
+  else if (currentTab==="timeline")     renderTimeline(c, content);
+  else if (currentTab==="invoices")     renderInvoices(c, content);
+  else if (currentTab==="feedback")     renderFeedback(c, content);
   else if (currentTab==="deliverables") renderDeliverables(c, content);
   else if (currentTab==="remarks")      renderRemarks(c, content);
   else if (currentTab==="access")       renderAccess(c, content);
@@ -3775,145 +3825,894 @@ function renderOverview(c, container) {
   const payPct = pct(c.amountPaid, c.dealValue);
   const totalDels = c.deliverables.length;
   const doneDels = c.deliverables.filter(d=>d.status==="done").length;
+  const inProgressDels = c.deliverables.filter(d=>d.status==="in-progress").length;
+  const pendingDels = c.deliverables.filter(d=>d.status==="pending").length;
   const accessReceived = c.access.filter(a=>a.status==="received").length;
   const accessTotal = c.access.length;
+  const recentActivities = c.remarks.length;
+  const contractStatus = c.startDate ? (c.contractEnd ? "Active" : "Ongoing") : "Not set";
+  const relType = c.retainer?.isRetainer ? "Retainer" : "Project";
 
-  const statsRow = el("div",{style:{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:"10px",marginBottom:"22px"}});
-  [
-    {num:inr(c.dealValue),lbl:"Deal Value",sub:payPct+"% collected",col:"var(--black-s)"},
-    {num:inr(rem>0?rem:0),lbl:rem>0?"Outstanding":"Fully Cleared",sub:rem>0?`${inr(c.amountPaid)} paid`:"✓ Payment complete",col:rem>0?"var(--red)":"var(--green)"},
-    {num:`${doneDels}/${totalDels}`,lbl:"Deliverables Done",sub:totalDels?`${c.deliverables.filter(d=>d.status==="in-progress").length} in progress`:"None added yet",col:"var(--black-s)"},
-    {num:accessTotal?`${accessReceived}/${accessTotal}`:"—",lbl:"Access Received",sub:accessTotal?`${accessTotal-accessReceived} pending`:"No access items",col:"var(--black-s)"},
-  ].forEach(s => {
-    const card = el("div",{class:"surface",style:{textAlign:"center",padding:"16px 12px"}});
-    card.innerHTML = `<div style="font-family:var(--ff-serif);font-size:24px;font-weight:600;color:${s.col}">${s.num}</div><div style="font-size:10px;font-weight:700;color:var(--ink-muted);letter-spacing:0.06em;text-transform:uppercase;margin:4px 0 2px">${s.lbl}</div><div style="font-size:10px;color:var(--ink-muted)">${s.sub}</div>`;
-    statsRow.appendChild(card);
+  // ── CLIENT IDENTITY BAR ──
+  const idBar = el("div",{style:{display:"flex",alignItems:"center",gap:"12px",padding:"14px 18px 12px",borderBottom:"1px solid var(--border)",background:"var(--cream)",marginBottom:"0"}});
+  const nameBlock = el("div");
+  nameBlock.innerHTML = `<div style="font-family:var(--ff-serif);font-size:19px;font-weight:400;color:var(--black-s);letter-spacing:-0.3px">${c.name||"Unnamed Client"}</div><div style="font-size:10px;color:var(--ink-muted);font-family:var(--ff-mono);margin-top:2px">${c.id||""} · Onboarded ${c.startDate||"—"}</div>`;
+  idBar.appendChild(nameBlock);
+  const idRight = el("div",{style:{marginLeft:"auto",display:"flex",gap:"8px",alignItems:"center"}});
+  const statusColors = {active:"var(--green)",paused:"var(--amber)",completed:"var(--ink-muted)",cancelled:"var(--red)"};
+  const sBadge = el("span",{style:{display:"inline-flex",alignItems:"center",gap:"5px",fontSize:"9px",letterSpacing:"0.15em",textTransform:"uppercase",fontWeight:"400",padding:"3px 9px",border:`1px solid ${statusColors[c.status]||"var(--border)"}`,color:statusColors[c.status]||"var(--ink-muted)",background:`${statusColors[c.status]||"var(--border)"}11`}});
+  if(c.status==="active"){const dot=el("span",{style:{width:"5px",height:"5px",borderRadius:"50%",background:"var(--green)",display:"inline-block",animation:"ovPulse 2.5s ease-in-out infinite"}});sBadge.appendChild(dot);}
+  sBadge.appendChild(document.createTextNode((c.status||"active").charAt(0).toUpperCase()+(c.status||"active").slice(1)));
+  idRight.appendChild(sBadge);
+  if(c.retainer?.isRetainer){const rb=el("span",{style:{display:"inline-flex",alignItems:"center",gap:"5px",fontSize:"9px",letterSpacing:"0.15em",textTransform:"uppercase",padding:"3px 9px",border:"1px solid rgba(24,95,165,0.3)",color:"var(--blue)",background:"rgba(24,95,165,0.06)"}},`Retainer`);idRight.appendChild(rb);}
+  idBar.appendChild(idRight);
+  container.appendChild(idBar);
+
+  // ── CONTRACT META STRIP ──
+  const metaStrip = el("div",{style:{display:"flex",gap:"0",borderBottom:"1px solid var(--border)",background:"var(--cream-d)",overflow:"hidden"}});
+  const metaFields = [
+    {k:"Start",v:c.startDate||"—"},{k:"End",v:c.contractEnd||"Ongoing"},{k:"Deal Value",v:inr(c.dealValue)},{k:"Services",v:(c.services?.length||0)+" service(s)"},{k:"Relationship",v:relType}
+  ];
+  metaFields.forEach((f,i) => {
+    const mf = el("div",{style:{padding:"10px 16px",borderRight:i<metaFields.length-1?"1px solid var(--border)":"none",flexShrink:"0"}});
+    mf.innerHTML = `<div style="font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--ink-muted);font-weight:400;margin-bottom:2px">${f.k}</div><div style="font-size:12px;color:var(--black-s);font-weight:400">${f.v}</div>`;
+    metaStrip.appendChild(mf);
   });
-  container.appendChild(statsRow);
+  container.appendChild(metaStrip);
 
-  if (c.retainer?.isRetainer) {
-    const ret = c.retainer;
-    const callout = el("div",{style:{background:"var(--blue-l)",border:"1px solid #bfdbfe",borderRadius:"10px",padding:"14px 18px",marginBottom:"22px",display:"flex",justifyContent:"space-between",alignItems:"center"}});
-    callout.innerHTML = `
-      <div>
-        <div style="font-size:10px;font-weight:700;color:var(--blue);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:4px">Active Retainer</div>
-        <div style="font-size:18px;font-weight:700;font-family:var(--ff-serif);color:var(--black-s)">${inr(ret.monthlyFee)}<span style="font-size:12px;font-weight:400;color:var(--ink-muted)"> / ${ret.billingCycle}</span></div>
-        <div style="font-size:11px;color:var(--ink-muted);margin-top:3px">Renewal ${ret.renewalDate||"—"} · ${ret.billingCycle} billing</div>
-      </div>
-      <div style="text-align:right">
-        <div class="ret-renewal-badge ${ret.renewalStatus}">${ret.renewalStatus}</div>
-        <div style="font-size:10px;color:var(--ink-muted);margin-top:6px">${ret.cycles?.length||0} cycles logged</div>
-      </div>`;
-    const goRetBtn = el("button",{class:"quick-action-btn",style:{marginLeft:"12px",fontSize:"11px"}},`→ Retainer`);
-    goRetBtn.onclick = ()=>{ currentTab="retainer"; renderRecord(); };
-    callout.appendChild(goRetBtn);
-    container.appendChild(callout);
-  }
+  // ── EXEC SUMMARY TABS ──
+  const tabWrap = el("div",{style:{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"0 18px",borderBottom:"1px solid var(--border)",background:"var(--cream)"}});
+  const tabLabel = el("span",{style:{fontSize:"9px",letterSpacing:"0.3em",textTransform:"uppercase",color:"var(--ink-muted)",fontWeight:"400",paddingBottom:"0"}},`Executive Summary`);
+  tabLabel.style.paddingTop="13px"; tabLabel.style.paddingBottom="13px";
+  tabWrap.appendChild(tabLabel);
 
-  const cn = el("div",{style:{marginBottom:"22px"}});
-  const cnHdr = el("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"10px"}});
-  cnHdr.innerHTML = `<div class="section-label" style="margin-bottom:0">Contract Terms & Notes</div>`;
-  const editNoteBtn = el("button",{class:"quick-action-btn",style:{fontSize:"11px",padding:"5px 11px"}},`✏ Edit`);
-  cnHdr.appendChild(editNoteBtn);
-  cn.appendChild(cnHdr);
-  const noteBox = el("div",{class:"surface surface-bordered-left",style:{fontSize:"13px",lineHeight:"1.75",whiteSpace:"pre-wrap"}},c.contractNotes||"No contract notes. Click Edit to add.");
-  cn.appendChild(noteBox);
-  editNoteBtn.onclick = () => {
-    const ta = el("textarea",{class:"form-input form-textarea",style:{minHeight:"120px",width:"100%"}}); ta.value=c.contractNotes||"";
-    const btnRow = el("div",{style:{display:"flex",gap:"8px",marginTop:"8px"}});
-    const saveBtn = el("button",{class:"remark-log-btn",style:{fontSize:"11px",padding:"7px 14px"}},`Save`);
-    const cancelBtn = el("button",{class:"btn-cancel",style:{fontSize:"11px",padding:"7px 14px"}},`Cancel`);
-    saveBtn.onclick = ()=>saveField(c.id,"contract_notes",ta.value.trim());
-    cancelBtn.onclick = ()=>{ noteBox.style.display=""; ta.replaceWith(noteBox); btnRow.remove(); editNoteBtn.textContent="✏ Edit"; };
-    noteBox.replaceWith(ta); ta.after(btnRow); btnRow.append(saveBtn,cancelBtn); ta.focus();
-    editNoteBtn.textContent="Editing…";
-  };
-  container.appendChild(cn);
+  const tabList = el("div",{style:{display:"flex",gap:"0"}});
+  const ovTabs = ["Overview","Deliverables","Access","Activity"];
+  let activeOvTab = "Overview";
+  const tabEls = {};
 
-  const pp = el("div",{style:{marginBottom:"22px"}});
-  const ppHdr = el("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"10px"}});
-  ppHdr.innerHTML = `<div class="section-label" style="margin-bottom:0">Payment Status</div>`;
-  const logPayBtn = el("button",{class:"quick-action-btn",style:{fontSize:"11px",padding:"5px 11px"}},`+ Log Payment`);
-  ppHdr.appendChild(logPayBtn);
-  pp.appendChild(ppHdr);
-  const payCard = el("div",{class:"surface"});
-  payCard.appendChild(makeBar(c.amountPaid, c.dealValue, "var(--black-s)", 7));
-  const payInfo = el("div",{style:{display:"flex",justifyContent:"space-between",marginTop:"10px",fontSize:"12px",flexWrap:"wrap",gap:"6px"}});
-  payInfo.innerHTML = `<span style="color:var(--green);font-weight:500">Paid: ${inr(c.amountPaid)}</span><span style="color:var(--ink-muted);font-family:var(--ff-mono)">Total: ${inr(c.dealValue)}</span><span style="color:${rem>0?"var(--red)":"var(--green)"};font-weight:500">${rem>0?"Outstanding: "+inr(rem):"✓ Fully Cleared"}</span>`;
-  payCard.appendChild(payInfo);
-  const payForm = el("div",{style:{display:"none",marginTop:"12px"}});
-  const payInp = el("input",{type:"number",class:"form-input",placeholder:`Amount to add`,style:{marginBottom:"8px"}});
-  const payBtns = el("div",{style:{display:"flex",gap:"8px"}});
+  ovTabs.forEach(name => {
+    const t = el("button",{style:{fontSize:"11px",letterSpacing:"0.15em",textTransform:"uppercase",fontWeight:"400",color:name==="Overview"?"var(--black-s)":"var(--ink-muted)",padding:"12px 16px 13px",cursor:"pointer",border:"none",borderBottom:name==="Overview"?"2px solid var(--black-s)":"2px solid transparent",background:"none",fontFamily:"var(--ff-sans)",transition:"color 0.18s,border-color 0.18s",position:"relative",bottom:"-1px",whiteSpace:"nowrap"}},name);
+    t.addEventListener("mouseenter",()=>{ if(name!==activeOvTab) t.style.color="var(--black-s)"; });
+    t.addEventListener("mouseleave",()=>{ if(name!==activeOvTab) t.style.color="var(--ink-muted)"; });
+    tabEls[name] = t;
+    tabList.appendChild(t);
+  });
+  tabWrap.appendChild(tabList);
+  container.appendChild(tabWrap);
+
+  // ── PANELS CONTAINER ──
+  const panelWrap = el("div",{style:{position:"relative",overflow:"hidden"}});
+  const panels = {};
+
+  // ── PANEL: OVERVIEW ──
+  const pOverview = el("div",{style:{opacity:"1",transform:"translateY(0)",transition:"opacity 0.25s ease,transform 0.25s ease"}});
+  // KPI strip
+  const kpiStrip = el("div",{style:{display:"grid",gridTemplateColumns:"repeat(4,1fr)",borderBottom:"1px solid var(--border)"}});
+  const kpiData = [
+    {label:"Payment Health",val:payPct+"%",sub:`${inr(c.amountPaid)} collected`,barW:payPct,barCol:payPct>=100?"var(--green)":payPct>=50?"var(--amber)":"var(--red)"},
+    {label:"Deal Value",val:inr(c.dealValue),sub:rem>0?`${inr(rem)} outstanding`:"✓ Fully cleared",barW:null,valCol:rem>0?"var(--black-s)":"var(--green)"},
+    {label:"Deliverables",val:`${doneDels}/${totalDels}`,sub:totalDels?`${inProgressDels} in progress`:"None added",barW:totalDels?pct(doneDels,totalDels):0,barCol:"var(--black-s)"},
+    {label:"Access",val:`${accessReceived}/${accessTotal||"—"}`,sub:accessTotal?`${accessTotal-accessReceived} pending`:"No items tracked",barW:null},
+  ];
+  const kpiBarEls = [];
+  kpiData.forEach((k,i) => {
+    const cell = el("div",{style:{padding:"16px 18px",borderRight:i<3?"1px solid var(--border)":"none",position:"relative",overflow:"hidden"}});
+    cell.innerHTML = `<div style="font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--ink-muted);font-weight:400;margin-bottom:5px">${k.label}</div><div style="font-family:var(--ff-serif);font-size:22px;font-weight:400;color:${k.valCol||"var(--black-s)"};line-height:1">${k.val}</div><div style="font-size:10px;color:var(--ink-muted);margin-top:3px;font-family:var(--ff-mono)">${k.sub}</div>`;
+    if(k.barW!==null){
+      const track=el("div",{style:{position:"absolute",bottom:"0",left:"0",right:"0",height:"2px",background:"var(--cream-d)"}});
+      const fill=el("div",{style:{height:"100%",background:k.barCol||"var(--gold)",width:"0%",transition:"width 1.1s cubic-bezier(0.25,1,0.5,1)"}});
+      track.appendChild(fill); cell.appendChild(track);
+      kpiBarEls.push({el:fill,w:k.barW});
+    }
+    kpiStrip.appendChild(cell);
+  });
+  pOverview.appendChild(kpiStrip);
+
+  // Two-col detail
+  const detGrid = el("div",{style:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"0"}});
+
+  const leftCol = el("div",{style:{padding:"18px",borderRight:"1px solid var(--border)"}});
+  // Payment section
+  const paySecLabel = el("div",{style:{fontSize:"9px",letterSpacing:"0.25em",textTransform:"uppercase",color:"var(--gold-d,#9a8b6e)",fontWeight:"400",marginBottom:"12px",display:"flex",alignItems:"center",gap:"8px"}},`Payment Status`);
+  const after1=el("span",{style:{flex:"1",height:"1px",background:"var(--border)",display:"inline-block"}});
+  paySecLabel.appendChild(after1); leftCol.appendChild(paySecLabel);
+  const payBarTrack = el("div",{style:{height:"3px",background:"var(--cream-d)",border:"1px solid var(--border)",position:"relative",overflow:"hidden"}});
+  const payBarFill = el("div",{style:{height:"100%",background:"var(--black-s)",width:"0%",transition:"width 1.3s cubic-bezier(0.25,1,0.5,1)"}});
+  payBarTrack.appendChild(payBarFill); leftCol.appendChild(payBarTrack);
+  const payLabels = el("div",{style:{display:"flex",justifyContent:"space-between",marginTop:"6px",fontSize:"10px",fontFamily:"var(--ff-mono)"}});
+  payLabels.innerHTML = `<span style="color:var(--green)">Paid ${inr(c.amountPaid)}</span><span style="color:var(--ink-muted)">Total ${inr(c.dealValue)}</span><span style="color:${rem>0?"var(--red)":"var(--green)"}">${rem>0?"Due "+inr(rem):"✓ Cleared"}</span>`;
+  leftCol.appendChild(payLabels);
+
+  // Log Payment inline
+  const logPayBtn = el("button",{class:"quick-action-btn",style:{fontSize:"11px",padding:"5px 11px",marginTop:"12px"}},`+ Log Payment`);
+  leftCol.appendChild(logPayBtn);
+  const payForm = el("div",{style:{display:"none",marginTop:"10px"}});
+  const payInp = el("input",{type:"number",class:"form-input",placeholder:"Amount to add",style:{marginBottom:"8px"}});
+  const payBtnRow = el("div",{style:{display:"flex",gap:"8px"}});
   const paySave = el("button",{class:"remark-log-btn",style:{fontSize:"11px",padding:"7px 14px"}},`Log`);
   const payCancel = el("button",{class:"btn-cancel",style:{fontSize:"11px",padding:"7px 14px"}},`Cancel`);
-  paySave.onclick = () => {
-    const add = parseInt(payInp.value)||0; if(!add) return;
-    const newPaid = Math.min(c.dealValue, c.amountPaid+add);
-    const remark = {id:"r"+uid(),date:tod(),by:"Chirag",type:"internal",text:`Payment received: ${inr(add)}`};
-    saveClientUpdate({...c, amountPaid:newPaid, remarks:[...c.remarks,remark]});
-  };
+  paySave.onclick = () => { const add=parseInt(payInp.value)||0; if(!add)return; const newPaid=Math.min(c.dealValue,c.amountPaid+add); const remark={id:"r"+uid(),date:tod(),by:"Chirag",type:"internal",text:`Payment received: ${inr(add)}`}; saveClientUpdate({...c,amountPaid:newPaid,remarks:[...c.remarks,remark]}); };
   payCancel.onclick = ()=>{ payForm.style.display="none"; logPayBtn.textContent="+ Log Payment"; };
-  payBtns.append(paySave,payCancel); payForm.append(payInp,payBtns); payCard.appendChild(payForm);
-  logPayBtn.onclick = ()=>{ payForm.style.display=payForm.style.display==="none"?"block":"none"; if(payForm.style.display==="block"){payInp.focus();logPayBtn.textContent="↑ Hide";}else logPayBtn.textContent="+ Log Payment"; };
-  pp.appendChild(payCard);
-  container.appendChild(pp);
+  payBtnRow.append(paySave,payCancel); payForm.append(payInp,payBtnRow); leftCol.appendChild(payForm);
+  logPayBtn.onclick = ()=>{ const open=payForm.style.display==="none"; payForm.style.display=open?"block":"none"; logPayBtn.textContent=open?"↑ Hide":"+ Log Payment"; if(open) payInp.focus(); };
 
-  if (c.deliverables.length) {
-    const dp = el("div",{style:{marginBottom:"22px"}});
-    dp.innerHTML = `<div class="section-label">Delivery Progress</div>`;
-    const grid = el("div",{class:"del-cards"});
-    c.deliverables.forEach(d => {
-      const card = el("div",{class:"del-card",style:{cursor:"pointer"},onclick:()=>{ currentTab="deliverables"; renderRecord(); }});
-      const top = el("div",{class:"del-card-top"});
-      const badge = makePill(d.status, d.status==="done"?"pill-green":d.status==="in-progress"?"pill-amber":"pill-muted",true);
+  // Contract block
+  const cnSecLabel = el("div",{style:{fontSize:"9px",letterSpacing:"0.25em",textTransform:"uppercase",color:"var(--gold-d,#9a8b6e)",fontWeight:"400",marginBottom:"10px",display:"flex",alignItems:"center",gap:"8px",marginTop:"18px"}},`Contract`);
+  cnSecLabel.appendChild(el("span",{style:{flex:"1",height:"1px",background:"var(--border)",display:"inline-block"}}));
+  leftCol.appendChild(cnSecLabel);
+  const cnRows = [
+    {k:"Status",v:contractStatus},{k:"Type",v:relType},{k:"Services",v:(c.services?.length||0)+" service(s)"},{k:"Revisions",v:String(c.sow?.revisions??3)+" allowed"},
+  ];
+  cnRows.forEach(r=>{
+    const row=el("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"7px 0",borderBottom:"1px solid rgba(200,194,182,0.35)",fontSize:"12px"}});
+    row.appendChild(el("span",{style:{color:"var(--ink-muted)"}},r.k));
+    row.appendChild(el("span",{style:{color:"var(--black-s)"}},r.v));
+    leftCol.appendChild(row);
+  });
+  // Contract notes edit
+  const cnNoteWrap = el("div",{style:{marginTop:"12px"}});
+  const cnNoteHdr = el("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"6px"}});
+  cnNoteHdr.innerHTML=`<span style="font-size:10px;color:var(--ink-muted)">Contract Notes</span>`;
+  const editNoteBtn=el("button",{class:"quick-action-btn",style:{fontSize:"10px",padding:"3px 9px"}},`✏ Edit`);
+  cnNoteHdr.appendChild(editNoteBtn); cnNoteWrap.appendChild(cnNoteHdr);
+  const noteBox=el("div",{class:"surface surface-bordered-left",style:{fontSize:"12px",lineHeight:"1.75",whiteSpace:"pre-wrap",padding:"10px 12px",minHeight:"36px"}},c.contractNotes||"No contract notes.");
+  cnNoteWrap.appendChild(noteBox);
+  editNoteBtn.onclick=()=>{
+    const ta=el("textarea",{class:"form-input form-textarea",style:{minHeight:"80px",width:"100%"}}); ta.value=c.contractNotes||"";
+    const bRow=el("div",{style:{display:"flex",gap:"6px",marginTop:"6px"}});
+    const sv=el("button",{class:"remark-log-btn",style:{fontSize:"11px",padding:"6px 12px"}},`Save`);
+    const cx=el("button",{class:"btn-cancel",style:{fontSize:"11px",padding:"6px 12px"}},`Cancel`);
+    sv.onclick=()=>saveField(c.id,"contract_notes",ta.value.trim());
+    cx.onclick=()=>{ noteBox.style.display=""; ta.replaceWith(noteBox); bRow.remove(); editNoteBtn.textContent="✏ Edit"; };
+    noteBox.replaceWith(ta); ta.after(bRow); bRow.append(sv,cx); ta.focus(); editNoteBtn.textContent="Editing…";
+  };
+  leftCol.appendChild(cnNoteWrap);
+  detGrid.appendChild(leftCol);
+
+  // Right col: quick stats + retainer + quick actions
+  const rightCol = el("div",{style:{padding:"18px"}});
+  const qsLabel = el("div",{style:{fontSize:"9px",letterSpacing:"0.25em",textTransform:"uppercase",color:"var(--gold-d,#9a8b6e)",fontWeight:"400",marginBottom:"10px",display:"flex",alignItems:"center",gap:"8px"}},`Quick Stats`);
+  qsLabel.appendChild(el("span",{style:{flex:"1",height:"1px",background:"var(--border)",display:"inline-block"}}));
+  rightCol.appendChild(qsLabel);
+  const qsRows=[
+    {k:"Recent activity",v:recentActivities+" update(s)"},{k:"Meetings logged",v:(c.meetings?.length||0)+" meeting(s)"},{k:"Access items",v:`${accessReceived}/${accessTotal||0} received`},{k:"Scope notes",v:c.sow?.scopeNotes?"Added":"None"},{k:"Open remarks",v:c.remarks.filter(r=>r.type==="action").length+" action(s)"}
+  ];
+  qsRows.forEach(r=>{
+    const row=el("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"7px 0",borderBottom:"1px solid rgba(200,194,182,0.35)",fontSize:"12px"}});
+    row.appendChild(el("span",{style:{color:"var(--ink-muted)"}},r.k));
+    row.appendChild(el("span",{style:{color:"var(--black-s)"}},r.v));
+    rightCol.appendChild(row);
+  });
+
+  if(c.retainer?.isRetainer){
+    const ret=c.retainer;
+    const retBanner=el("div",{style:{background:"var(--blue-l)",border:"1px solid #bfdbfe",padding:"12px 14px",marginTop:"14px",display:"flex",justifyContent:"space-between",alignItems:"center"}});
+    retBanner.innerHTML=`<div><div style="font-size:9px;font-weight:700;color:var(--blue);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:3px">Active Retainer</div><div style="font-size:17px;font-family:var(--ff-serif);color:var(--black-s)">${inr(ret.monthlyFee)}<span style="font-size:11px;color:var(--ink-muted)"> / ${ret.billingCycle}</span></div><div style="font-size:10px;color:var(--ink-muted);margin-top:2px">Renewal ${ret.renewalDate||"—"} · ${ret.cycles?.length||0} cycles</div></div><div style="text-align:right"><div class="ret-renewal-badge ${ret.renewalStatus}">${ret.renewalStatus}</div></div>`;
+    const goRet=el("button",{class:"quick-action-btn",style:{fontSize:"11px",marginLeft:"10px"}},`→ View`);
+    goRet.onclick=()=>{currentTab="retainer";renderRecord();};
+    retBanner.appendChild(goRet);
+    rightCol.appendChild(retBanner);
+  }
+
+  // Quick Actions
+  const qaLabel=el("div",{style:{fontSize:"9px",letterSpacing:"0.25em",textTransform:"uppercase",color:"var(--gold-d,#9a8b6e)",fontWeight:"400",marginBottom:"10px",display:"flex",alignItems:"center",gap:"8px",marginTop:"18px"}},`Quick Actions`);
+  qaLabel.appendChild(el("span",{style:{flex:"1",height:"1px",background:"var(--border)",display:"inline-block"}}));
+  rightCol.appendChild(qaLabel);
+  const qaRow=el("div",{style:{display:"flex",gap:"6px",flexWrap:"wrap"}});
+  const statusCycle=el("button",{class:"quick-action-btn"},`Status: ${c.status}`);
+  statusCycle.onclick=()=>{const s=["active","paused","completed","cancelled"];const n=s[(s.indexOf(c.status)+1)%s.length];saveField(c.id,"status",n);};
+  const goAccess=el("button",{class:"quick-action-btn"},`🔑 Access`); goAccess.onclick=()=>{currentTab="access";renderRecord();};
+  const goNotes=el("button",{class:"quick-action-btn"},`📋 Notes`); goNotes.onclick=()=>{currentTab="notes";renderRecord();};
+  const goMeetings=el("button",{class:"quick-action-btn"},`📅 Meetings`); goMeetings.onclick=()=>{currentTab="meetings";renderRecord();};
+  const goRemark=el("button",{class:"quick-action-btn"},`📝 Log Activity`); goRemark.onclick=()=>{currentTab="remarks";renderRecord();};
+  const goRetainer=el("button",{class:"quick-action-btn"},`🔄 Retainer`); goRetainer.onclick=()=>{currentTab="retainer";renderRecord();};
+  [statusCycle,goAccess,goNotes,goMeetings,goRemark,goRetainer].forEach(b=>qaRow.appendChild(b));
+  rightCol.appendChild(qaRow);
+  detGrid.appendChild(rightCol);
+  pOverview.appendChild(detGrid);
+  panels["Overview"] = pOverview;
+
+  // ── PANEL: DELIVERABLES ──
+  const pDels = el("div",{style:{opacity:"0",transform:"translateY(8px)",transition:"opacity 0.25s ease,transform 0.25s ease",display:"none"}});
+  const delKpi=el("div",{style:{display:"grid",gridTemplateColumns:"repeat(4,1fr)",borderBottom:"1px solid var(--border)"}});
+  [{label:"Total",val:totalDels,sub:"deliverables",col:"var(--black-s)"},{label:"Done",val:doneDels,sub:"completed",col:"var(--green)"},{label:"In Progress",val:inProgressDels,sub:"active",col:"var(--amber)"},{label:"Pending",val:pendingDels,sub:"not started",col:"var(--ink-muted)"}].forEach((k,i)=>{
+    const cell=el("div",{style:{padding:"16px 18px",borderRight:i<3?"1px solid var(--border)":"none"}});
+    cell.innerHTML=`<div style="font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--ink-muted);font-weight:400;margin-bottom:5px">${k.label}</div><div style="font-family:var(--ff-serif);font-size:22px;color:${k.col};line-height:1">${k.val}</div><div style="font-size:10px;color:var(--ink-muted);margin-top:3px">${k.sub}</div>`;
+    delKpi.appendChild(cell);
+  });
+  pDels.appendChild(delKpi);
+  const delBody=el("div",{style:{padding:"18px"}});
+  const delSecLbl=el("div",{style:{fontSize:"9px",letterSpacing:"0.25em",textTransform:"uppercase",color:"var(--gold-d,#9a8b6e)",fontWeight:"400",marginBottom:"12px",display:"flex",alignItems:"center",gap:"8px"}},`All Deliverables`);
+  delSecLbl.appendChild(el("span",{style:{flex:"1",height:"1px",background:"var(--border)",display:"inline-block"}}));
+  delBody.appendChild(delSecLbl);
+  if(!c.deliverables.length){
+    delBody.appendChild(el("div",{style:{padding:"24px",textAlign:"center",fontSize:"11px",color:"var(--ink-muted)",letterSpacing:"0.1em"}},`No deliverables added yet`));
+  } else {
+    const delGrid=el("div",{class:"del-cards"});
+    c.deliverables.forEach((d,di)=>{
+      const card=el("div",{class:"del-card",style:{cursor:"pointer",animation:`ovSlideIn 0.3s ease ${di*0.06}s both`},onclick:()=>{currentTab="deliverables";renderRecord();}});
+      const top=el("div",{class:"del-card-top"});
+      const badge=makePill(d.status,d.status==="done"?"pill-green":d.status==="in-progress"?"pill-amber":"pill-muted",true);
       badge.style.cursor="pointer";
-      badge.onclick = (e) => { e.stopPropagation(); const states=["pending","in-progress","done"]; const next=states[(states.indexOf(d.status)+1)%3]; const nd=c.deliverables.map(x=>x.id===d.id?{...x,status:next}:x); saveField(c.id,"deliverables",nd); };
+      badge.onclick=(e)=>{e.stopPropagation();const states=["pending","in-progress","done"];const next=states[(states.indexOf(d.status)+1)%3];const nd=c.deliverables.map(x=>x.id===d.id?{...x,status:next}:x);saveField(c.id,"deliverables",nd);};
       top.append(el("span",{class:"del-card-name"},d.name),badge);
       card.appendChild(top);
-      card.appendChild(makeBar(d.delivered, d.promised));
+      card.appendChild(makeBar(d.delivered,d.promised));
       card.appendChild(el("div",{class:"del-card-count"},`${d.delivered} / ${d.promised} ${d.unit}`));
-      grid.appendChild(card);
+      delGrid.appendChild(card);
     });
-    dp.appendChild(grid);
-    container.appendChild(dp);
+    delBody.appendChild(delGrid);
+  }
+  pDels.appendChild(delBody);
+  panels["Deliverables"]=pDels;
+
+  // ── PANEL: ACCESS ──
+  const pAccess=el("div",{style:{opacity:"0",transform:"translateY(8px)",transition:"opacity 0.25s ease,transform 0.25s ease",display:"none"}});
+  const accKpi=el("div",{style:{display:"grid",gridTemplateColumns:"repeat(4,1fr)",borderBottom:"1px solid var(--border)"}});
+  const accPct=accessTotal?pct(accessReceived,accessTotal):0;
+  [{label:"Total",val:accessTotal||"—",sub:"items tracked"},{label:"Received",val:accessReceived,sub:"granted",col:"var(--green)"},{label:"Pending",val:accessTotal-accessReceived,sub:"awaited",col:(accessTotal-accessReceived)>0?"var(--amber)":"var(--ink-muted)"},{label:"Coverage",val:accessTotal?accPct+"%":"—",sub:"complete"}].forEach((k,i)=>{
+    const cell=el("div",{style:{padding:"16px 18px",borderRight:i<3?"1px solid var(--border)":"none"}});
+    cell.innerHTML=`<div style="font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--ink-muted);font-weight:400;margin-bottom:5px">${k.label}</div><div style="font-family:var(--ff-serif);font-size:22px;color:${k.col||"var(--black-s)"};line-height:1">${k.val}</div><div style="font-size:10px;color:var(--ink-muted);margin-top:3px">${k.sub}</div>`;
+    accKpi.appendChild(cell);
+  });
+  pAccess.appendChild(accKpi);
+  const accBody=el("div",{style:{padding:"18px"}});
+  const accSecLbl=el("div",{style:{fontSize:"9px",letterSpacing:"0.25em",textTransform:"uppercase",color:"var(--gold-d,#9a8b6e)",fontWeight:"400",marginBottom:"12px",display:"flex",alignItems:"center",gap:"8px"}},`Access Items`);
+  accSecLbl.appendChild(el("span",{style:{flex:"1",height:"1px",background:"var(--border)",display:"inline-block"}}));
+  accBody.appendChild(accSecLbl);
+  if(!c.access.length){
+    accBody.appendChild(el("div",{style:{padding:"24px",textAlign:"center",fontSize:"11px",color:"var(--ink-muted)",letterSpacing:"0.1em"}},`No access items tracked`));
+  } else {
+    const accGrid=el("div",{style:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"8px"}});
+    c.access.forEach((a,ai)=>{
+      const item=el("div",{style:{padding:"10px 12px",border:"1px solid var(--border)",background:"var(--cream)",display:"flex",alignItems:"center",justifyContent:"space-between",fontSize:"11px",animation:`ovSlideIn 0.3s ease ${ai*0.06}s both`}});
+      const nameSpan=el("span",{style:{color:"var(--ink-mid)"}},a.name||a.platform||"—");
+      const statusColors2={received:"var(--green)",pending:"var(--amber)",requested:"var(--blue)"};
+      const stSpan=el("span",{style:{fontSize:"9px",letterSpacing:"0.1em",textTransform:"uppercase",color:statusColors2[a.status]||"var(--ink-muted)"}},a.status||"—");
+      item.append(nameSpan,stSpan);
+      accGrid.appendChild(item);
+    });
+    accBody.appendChild(accGrid);
+  }
+  const goAccessFull=el("button",{class:"quick-action-btn",style:{marginTop:"12px",fontSize:"11px"}},`→ Manage Access`);
+  goAccessFull.onclick=()=>{currentTab="access";renderRecord();};
+  accBody.appendChild(goAccessFull);
+  pAccess.appendChild(accBody);
+  panels["Access"]=pAccess;
+
+  // ── PANEL: ACTIVITY ──
+  const pActivity=el("div",{style:{opacity:"0",transform:"translateY(8px)",transition:"opacity 0.25s ease,transform 0.25s ease",display:"none"}});
+  const actBody=el("div",{style:{padding:"18px"}});
+  const actSecLbl=el("div",{style:{fontSize:"9px",letterSpacing:"0.25em",textTransform:"uppercase",color:"var(--gold-d,#9a8b6e)",fontWeight:"400",marginBottom:"12px",display:"flex",alignItems:"center",gap:"8px"}},`Recent Updates`);
+  actSecLbl.appendChild(el("span",{style:{flex:"1",height:"1px",background:"var(--border)",display:"inline-block"}}));
+  actBody.appendChild(actSecLbl);
+  if(!c.remarks.length){
+    actBody.appendChild(el("div",{style:{padding:"24px",textAlign:"center",fontSize:"11px",color:"var(--ink-muted)",letterSpacing:"0.1em"}},`No updates logged yet`));
+  } else {
+    [...c.remarks].slice(-5).reverse().forEach((r,ri)=>{
+      const item=el("div",{style:{display:"flex",gap:"12px",padding:"10px 0",borderBottom:"1px solid rgba(200,194,182,0.3)",animation:`ovSlideIn 0.3s ease ${ri*0.06}s both`}});
+      const lineWrap=el("div",{style:{display:"flex",flexDirection:"column",alignItems:"center",gap:"0",flexShrink:"0",paddingTop:"3px"}});
+      const dot=el("div",{style:{width:"6px",height:"6px",borderRadius:"50%",background:"var(--gold)",flexShrink:"0"}});
+      const thread=el("div",{style:{width:"1px",background:"var(--border)",flex:"1",minHeight:"20px",marginTop:"3px"}});
+      lineWrap.append(dot,thread);
+      const textWrap=el("div");
+      textWrap.appendChild(el("div",{style:{fontSize:"12px",color:"var(--ink-mid)",lineHeight:"1.6"}},r.text));
+      const meta=el("div",{style:{fontSize:"10px",color:"var(--ink-muted)",marginTop:"2px",fontFamily:"var(--ff-mono)"}});
+      meta.innerHTML=`${r.by||"—"} &nbsp;·&nbsp; ${r.date||"—"} &nbsp;·&nbsp; <span style="text-transform:capitalize">${r.type||"note"}</span>`;
+      textWrap.appendChild(meta);
+      item.append(lineWrap,textWrap);
+      actBody.appendChild(item);
+    });
+    const moreActBtn=el("button",{class:"quick-action-btn",style:{marginTop:"12px",fontSize:"11px"}},`View All Activity →`);
+    moreActBtn.onclick=()=>{currentTab="remarks";renderRecord();};
+    actBody.appendChild(moreActBtn);
+  }
+  pActivity.appendChild(actBody);
+  panels["Activity"]=pActivity;
+
+  // ── WIRE TABS ──
+  Object.values(panels).forEach(p=>panelWrap.appendChild(p));
+  container.appendChild(panelWrap);
+
+  function switchOvTab(name) {
+    activeOvTab=name;
+    ovTabs.forEach(n=>{
+      const t=tabEls[n];
+      t.style.color=n===name?"var(--black-s)":"var(--ink-muted)";
+      t.style.borderBottom=n===name?"2px solid var(--black-s)":"2px solid transparent";
+    });
+    Object.entries(panels).forEach(([n,p])=>{
+      if(n===name){
+        p.style.display="block";
+        requestAnimationFrame(()=>requestAnimationFrame(()=>{p.style.opacity="1";p.style.transform="translateY(0)";}));
+      } else {
+        p.style.opacity="0"; p.style.transform="translateY(8px)";
+        setTimeout(()=>{ if(activeOvTab!==n) p.style.display="none"; },260);
+      }
+    });
   }
 
-  if (c.remarks.length) {
-    const rr = el("div",{style:{marginBottom:"22px"}});
-    const rrHdr = el("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"10px"}});
-    rrHdr.innerHTML = `<div class="section-label" style="margin-bottom:0">Latest Activity</div>`;
-    const moreBtn = el("button",{class:"quick-action-btn",style:{fontSize:"11px",padding:"5px 11px"}},`View All →`);
-    moreBtn.onclick=()=>{ currentTab="remarks"; renderRecord(); };
-    rrHdr.appendChild(moreBtn); rr.appendChild(rrHdr);
-    [...c.remarks].slice(-3).reverse().forEach(r => {
-      const item = el("div",{style:{display:"flex",gap:"10px",padding:"10px 14px",background:"var(--card)",border:"1px solid var(--border-l)",borderRadius:"8px",marginBottom:"8px"}});
-      item.appendChild(makePill(r.by,r.type==="client"?"pill-blue":r.type==="action"?"pill-amber":"pill-muted",true));
-      item.appendChild(el("span",{style:{fontSize:"13px",color:"var(--black-s)",flex:"1"}},r.text));
-      item.appendChild(el("span",{style:{fontSize:"10px",color:"var(--ink-muted)",fontFamily:"var(--ff-mono)",flexShrink:"0"}},r.date));
-      rr.appendChild(item);
-    });
-    container.appendChild(rr);
+  ovTabs.forEach(name=>tabEls[name].addEventListener("click",()=>switchOvTab(name)));
+
+  // ── INJECT ANIMATION KEYFRAME ──
+  if(!document.getElementById("ov-style")){
+    const s=document.createElement("style");
+    s.id="ov-style";
+    s.textContent=`@keyframes ovPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(0.8)}} @keyframes ovSlideIn{from{opacity:0;transform:translateX(-6px)}to{opacity:1;transform:translateX(0)}}`;
+    document.head.appendChild(s);
   }
 
-  container.appendChild(el("div",{class:"divider"}));
-  const qa = el("div");
-  qa.innerHTML = `<div class="section-label" style="margin-bottom:10px">Quick Actions</div>`;
-  const qaRow = el("div",{style:{display:"flex",gap:"8px",flexWrap:"wrap"}});
-  const statusCycle = el("button",{class:"quick-action-btn"},`Status: ${c.status}`);
-  statusCycle.onclick=()=>{ const s=["active","paused","completed","cancelled"]; const n=s[(s.indexOf(c.status)+1)%s.length]; saveField(c.id,"status",n); };
-  const goAccess = el("button",{class:"quick-action-btn"},`🔑 Access`);
-  goAccess.onclick=()=>{ currentTab="access"; renderRecord(); };
-  const goRemark = el("button",{class:"quick-action-btn"},`📝 Log Remark`);
-  goRemark.onclick=()=>{ currentTab="remarks"; renderRecord(); };
-  const goRetainer = el("button",{class:"quick-action-btn"},`🔄 Retainer`);
-  goRetainer.onclick=()=>{ currentTab="retainer"; renderRecord(); };
-  [statusCycle,goAccess,goRemark,goRetainer].forEach(b=>qaRow.appendChild(b));
-  qa.appendChild(qaRow); container.appendChild(qa);
+  // ── ANIMATE BARS ON LOAD ──
+  setTimeout(()=>{
+    kpiBarEls.forEach(b=>{ b.el.style.width=b.w+"%"; });
+    payBarFill.style.width=payPct+"%";
+  },80);
+}
+
+// ─── NOTES ────────────────────────────────────
+function renderNotes(c, container) {
+  const hdr = el("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"16px"}});
+  hdr.innerHTML = `<div>
+    <div class="section-label" style="margin-bottom:2px">Client Notes</div>
+    <div style="font-size:11px;color:var(--ink-muted)">Private notes about this client — strategy, personality, preferences, red flags.</div>
+  </div>`;
+  const saveBtn = el("button",{class:"remark-log-btn",style:{fontSize:"11px",padding:"7px 18px"}},`Save Notes`);
+  hdr.appendChild(saveBtn);
+  container.appendChild(hdr);
+
+  const surface = el("div",{class:"surface",style:{padding:"0",marginBottom:"16px",overflow:"hidden"}});
+  const ta = el("textarea",{style:{width:"100%",minHeight:"340px",background:"transparent",border:"none",outline:"none",padding:"20px",fontFamily:"var(--ff-sans)",fontSize:"13px",color:"var(--black-s)",lineHeight:"1.8",resize:"vertical",boxSizing:"border-box"}});
+  ta.placeholder = "Write anything about this client…\n\nIdeas:\n• Communication style & preferences\n• Decision makers & org structure\n• Pain points & goals\n• Red flags or sensitivities\n• Relationship history\n• Upsell opportunities spotted\n• Internal HOC strategy notes";
+  ta.value = c.clientNotes || "";
+  surface.appendChild(ta);
+  container.appendChild(surface);
+
+  let noteTimer;
+  const autoSavePill = el("div",{style:{fontSize:"10px",color:"var(--ink-muted)",marginBottom:"16px",fontFamily:"var(--ff-mono)"}},`Auto-saves as you type`);
+  container.appendChild(autoSavePill);
+
+  ta.addEventListener("input", () => {
+    autoSavePill.textContent = "Unsaved…";
+    clearTimeout(noteTimer);
+    noteTimer = setTimeout(()=>{ saveField(c.id,"client_notes",ta.value); autoSavePill.textContent="Auto-saved ✓"; }, 1200);
+  });
+  saveBtn.onclick = () => { clearTimeout(noteTimer); saveField(c.id,"client_notes",ta.value); saveBtn.textContent="Saved ✓"; setTimeout(()=>saveBtn.textContent="Save Notes",1800); };
+
+  // Show last few meeting summaries inline as reference
+  const pastMeetings = (c.meetings||[]).filter(m=>m.date && m.date <= tod()).sort((a,b)=>b.date.localeCompare(a.date)).slice(0,3);
+  if (pastMeetings.length) {
+    const refHdr = el("div",{class:"section-label",style:{marginBottom:"10px"}},`Recent Meeting Summaries`);
+    container.appendChild(refHdr);
+    pastMeetings.forEach(m => {
+      const card = el("div",{class:"surface surface-bordered-left",style:{marginBottom:"10px",padding:"12px 16px"}});
+      card.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <span style="font-size:12px;font-weight:600;color:var(--black-s)">${m.title||"Meeting"}</span>
+        <span style="font-size:10px;color:var(--ink-muted);font-family:var(--ff-mono)">${m.date}</span>
+      </div>
+      <div style="font-size:12px;color:var(--ink-mid);line-height:1.7;white-space:pre-wrap">${m.discussed||"No summary."}</div>`;
+      container.appendChild(card);
+    });
+  }
+}
+
+// ─── MEETINGS ────────────────────────────────
+function renderMeetings(c, container) {
+  const meetings = c.meetings || [];
+  const today = tod();
+  const past = meetings.filter(m=>m.date && m.date <= today).sort((a,b)=>b.date.localeCompare(a.date));
+  const upcoming = meetings.filter(m=>m.date && m.date > today).sort((a,b)=>a.date.localeCompare(b.date));
+
+  // ── NEXT MEETING BANNER ──
+  const nextMeeting = upcoming[0] || null;
+  const bannerColor = nextMeeting ? "var(--blue-l)" : "var(--cream-d)";
+  const bannerBorder = nextMeeting ? "#bfdbfe" : "var(--border)";
+  const banner = el("div",{style:{background:bannerColor,border:`1px solid ${bannerBorder}`,borderRadius:"12px",padding:"18px 20px",marginBottom:"22px",display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:"12px"}});
+  const bannerLeft = el("div");
+  bannerLeft.innerHTML = nextMeeting
+    ? `<div style="font-size:10px;font-weight:700;color:var(--blue);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:4px">Next Meeting</div>
+       <div style="font-size:18px;font-weight:700;font-family:var(--ff-serif);color:var(--black-s)">${nextMeeting.title}</div>
+       <div style="font-size:12px;color:var(--ink-muted);margin-top:3px;font-family:var(--ff-mono)">${nextMeeting.date}${nextMeeting.time?" at "+nextMeeting.time:""}</div>
+       ${nextMeeting.agenda?`<div style="font-size:12px;color:var(--ink-mid);margin-top:6px;line-height:1.6">${nextMeeting.agenda}</div>`:""}`
+    : `<div style="font-size:10px;font-weight:700;color:var(--ink-muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:4px">Next Meeting</div>
+       <div style="font-size:15px;color:var(--ink-muted)">No upcoming meeting scheduled</div>`;
+  banner.appendChild(bannerLeft);
+  const scheduleBtn = el("button",{class:"remark-log-btn",style:{fontSize:"11px",padding:"8px 16px",whiteSpace:"nowrap"}},nextMeeting ? `+ Add Another` : `+ Schedule Meeting`);
+  banner.appendChild(scheduleBtn);
+  container.appendChild(banner);
+
+  // ── ADD MEETING FORM ──
+  const addForm = el("div",{class:"surface",style:{marginBottom:"18px",padding:"20px 22px",display:"none"}});
+  const formTitle = el("div",{style:{fontSize:"12px",fontWeight:"700",color:"var(--black-s)",letterSpacing:"0.06em",textTransform:"uppercase",marginBottom:"16px"}},`Log / Schedule Meeting`);
+  addForm.appendChild(formTitle);
+
+  const grid1 = el("div",{style:{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:"10px",marginBottom:"12px"}});
+  const mTitle = el("input",{class:"del-edit-input",type:"text",placeholder:"Meeting title (e.g. Monthly Review)"});
+  const mDate = el("input",{class:"del-edit-input",type:"date"});
+  const mTime = el("input",{class:"del-edit-input",type:"time",placeholder:"Time (optional)"});
+  mDate.value = today;
+  [mTitle,mDate,mTime].forEach(x=>grid1.appendChild(x));
+  addForm.appendChild(grid1);
+
+  const agendaLbl = el("div",{style:{fontSize:"9px",fontWeight:"700",color:"var(--ink-muted)",letterSpacing:"0.1em",textTransform:"uppercase",marginBottom:"5px"}},`Agenda / Notes to Discuss`);
+  const mAgenda = el("textarea",{class:"del-edit-input",style:{minHeight:"70px",resize:"vertical"}});
+  mAgenda.placeholder = "What needs to be covered…";
+  addForm.appendChild(agendaLbl); addForm.appendChild(mAgenda);
+
+  const discussedLbl = el("div",{style:{fontSize:"9px",fontWeight:"700",color:"var(--ink-muted)",letterSpacing:"0.1em",textTransform:"uppercase",marginBottom:"5px",marginTop:"12px"}},`What Was Discussed (fill after meeting)`);
+  const mDiscussed = el("textarea",{class:"del-edit-input",style:{minHeight:"90px",resize:"vertical"}});
+  mDiscussed.placeholder = "Summary of the meeting, decisions made, follow-ups agreed…";
+  addForm.appendChild(discussedLbl); addForm.appendChild(mDiscussed);
+
+  const actionLbl = el("div",{style:{fontSize:"9px",fontWeight:"700",color:"var(--ink-muted)",letterSpacing:"0.1em",textTransform:"uppercase",marginBottom:"5px",marginTop:"12px"}},`Action Items`);
+  const mActions = el("input",{class:"del-edit-input",type:"text"});
+  mActions.placeholder = "Comma-separated action items (e.g. Send report, Follow up on invoice)";
+  addForm.appendChild(actionLbl); addForm.appendChild(mActions);
+
+  const formFooter = el("div",{style:{display:"flex",gap:"8px",marginTop:"14px",justifyContent:"flex-end"}});
+  const cancelFormBtn = el("button",{class:"btn-cancel",style:{fontSize:"11px",padding:"7px 14px"}},`Cancel`);
+  const saveMeetingBtn = el("button",{class:"remark-log-btn",style:{fontSize:"11px",padding:"7px 18px"}},`Save Meeting`);
+  saveMeetingBtn.onclick = () => {
+    if (!mTitle.value.trim() || !mDate.value) return;
+    const actions = mActions.value.trim() ? mActions.value.split(",").map(s=>s.trim()).filter(Boolean) : [];
+    const newMeeting = { id:"m"+uid(), title:mTitle.value.trim(), date:mDate.value, time:mTime.value||"", agenda:mAgenda.value.trim(), discussed:mDiscussed.value.trim(), actions, createdAt:new Date().toISOString() };
+    mTitle.value=""; mDate.value=today; mTime.value=""; mAgenda.value=""; mDiscussed.value=""; mActions.value="";
+    addForm.style.display="none";
+    saveField(c.id,"meetings",[...(c.meetings||[]),newMeeting]);
+  };
+  cancelFormBtn.onclick = ()=>{ addForm.style.display="none"; };
+  formFooter.append(cancelFormBtn,saveMeetingBtn); addForm.appendChild(formFooter);
+  container.appendChild(addForm);
+  scheduleBtn.onclick = ()=>{ addForm.style.display=addForm.style.display==="none"?"block":"none"; if(addForm.style.display==="block") mTitle.focus(); };
+
+  // ── UPCOMING MEETINGS ──
+  if (upcoming.length > 1) {
+    const upcomingHdr = el("div",{class:"section-label",style:{marginBottom:"10px"}},`All Upcoming (${upcoming.length})`);
+    container.appendChild(upcomingHdr);
+    upcoming.forEach((m,i) => {
+      if (i===0) return; // already shown in banner
+      const card = renderMeetingCard(c, m, false);
+      container.appendChild(card);
+    });
+  }
+
+  // ── LAST MEETING ──
+  const lastMeeting = past[0];
+  if (lastMeeting) {
+    const lastHdr = el("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"10px"}});
+    lastHdr.innerHTML = `<div class="section-label" style="margin-bottom:0">Last Meeting</div>`;
+    container.appendChild(lastHdr);
+    container.appendChild(renderMeetingCard(c, lastMeeting, true));
+  }
+
+  // ── ALL PAST MEETINGS ──
+  if (past.length > 1) {
+    const pastHdr = el("div",{class:"section-label",style:{marginBottom:"10px",marginTop:"18px"}},`All Past Meetings (${past.length})`);
+    container.appendChild(pastHdr);
+    past.forEach((m,i) => {
+      if (i===0) return; // already shown as "last meeting"
+      const card = renderMeetingCard(c, m, true);
+      card.style.opacity = "0.75";
+      container.appendChild(card);
+    });
+  }
+
+  if (!meetings.length) {
+    const empty = el("div",{class:"surface",style:{textAlign:"center",padding:"36px",color:"var(--ink-muted)",fontSize:"13px"}});
+    empty.innerHTML = `<div style="font-size:32px;margin-bottom:10px">📅</div>No meetings logged yet.<br>Schedule your first meeting above.`;
+    container.appendChild(empty);
+  }
+}
+
+function renderMeetingCard(c, m, isPast) {
+  const card = el("div",{class:"surface",style:{marginBottom:"12px",padding:"18px 20px",position:"relative"}});
+
+  const cardTop = el("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:"12px"}});
+  const cardLeft = el("div");
+  cardLeft.innerHTML = `
+    <div style="font-size:14px;font-weight:700;color:var(--black-s);margin-bottom:3px">${m.title}</div>
+    <div style="font-size:11px;color:var(--ink-muted);font-family:var(--ff-mono)">${m.date}${m.time?" · "+m.time:""}</div>`;
+  const delBtn = el("button",{class:"access-del-btn",style:{fontSize:"10px",padding:"3px 7px"}},`✕`);
+  delBtn.onclick = ()=>{ if(confirm(`Remove "${m.title}"?`)) saveField(c.id,"meetings",(c.meetings||[]).filter(x=>x.id!==m.id)); };
+  cardTop.append(cardLeft,delBtn);
+  card.appendChild(cardTop);
+
+  if (m.agenda) {
+    const agendaDiv = el("div",{style:{marginBottom:"10px"}});
+    agendaDiv.innerHTML = `<div style="font-size:9px;font-weight:700;color:var(--ink-muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:4px">Agenda</div>
+    <div style="font-size:12px;color:var(--ink-mid);line-height:1.7;white-space:pre-wrap">${m.agenda}</div>`;
+    card.appendChild(agendaDiv);
+  }
+
+  // Discussed — editable inline
+  const discussedDiv = el("div",{style:{marginBottom:"10px"}});
+  const dLbl = el("div",{style:{fontSize:"9px",fontWeight:"700",color:"var(--ink-muted)",letterSpacing:"0.1em",textTransform:"uppercase",marginBottom:"4px"}},"What Was Discussed");
+  const dText = el("div",{class:"overview-edit-field",style:{fontSize:"12px",color:m.discussed?"var(--black-s)":"var(--ink-muted)",lineHeight:"1.7",whiteSpace:"pre-wrap",minHeight:"20px",cursor:"pointer"}},m.discussed||"Click to add meeting summary…");
+  dText.onclick = ()=>{
+    const ta = el("textarea",{style:{width:"100%",background:"var(--cream-d)",border:"1.5px solid var(--black-s)",borderRadius:"7px",padding:"8px 12px",fontSize:"12px",fontFamily:"var(--ff-sans)",color:"var(--black-s)",lineHeight:"1.7",resize:"vertical",outline:"none",minHeight:"80px"}}); ta.value=m.discussed||"";
+    const saveD = el("button",{class:"remark-log-btn",style:{fontSize:"10px",padding:"5px 12px",marginTop:"6px"}},`Save`);
+    saveD.onclick=()=>{ const updated=(c.meetings||[]).map(x=>x.id===m.id?{...x,discussed:ta.value.trim()}:x); saveField(c.id,"meetings",updated); };
+    dText.replaceWith(ta); ta.after(saveD); ta.focus();
+  };
+  discussedDiv.append(dLbl,dText); card.appendChild(discussedDiv);
+
+  if (m.actions && m.actions.length) {
+    const actDiv = el("div");
+    actDiv.innerHTML = `<div style="font-size:9px;font-weight:700;color:var(--ink-muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px">Action Items</div>`;
+    const chips = el("div",{style:{display:"flex",flexWrap:"wrap",gap:"6px"}});
+    m.actions.forEach(a => chips.appendChild(el("span",{class:"pill pill-amber sm"},`→ ${a}`)));
+    actDiv.appendChild(chips); card.appendChild(actDiv);
+  }
+
+  return card;
+}
+
+// ─── SOW ─────────────────────────────────────
+function renderSOW(c, container) {
+  const sow = c.sow || { included:[], excluded:[], revisions:3, revisionNotes:"", scopeNotes:"" };
+
+  const hdr = el("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:"20px"}});
+  hdr.innerHTML = `<div>
+    <div class="section-label" style="margin-bottom:2px">Scope of Work</div>
+    <div style="font-size:11px;color:var(--ink-muted)">What's included, excluded, and revision limits. Reference this to handle scope creep.</div>
+  </div>`;
+  container.appendChild(hdr);
+
+  // Revision limit bar
+  const revCard = el("div",{style:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"12px",marginBottom:"20px"}});
+  const revBlock = el("div",{class:"surface",style:{padding:"16px 18px"}});
+  revBlock.innerHTML = `<div class="section-label" style="margin-bottom:10px">Revision Limit</div>`;
+  const revRow = el("div",{style:{display:"flex",alignItems:"center",gap:"10px"}});
+  const revNum = el("span",{class:"overview-edit-field",style:{fontFamily:"var(--ff-serif)",fontSize:"32px",fontWeight:"600",color:"var(--black-s)"}}, String(sow.revisions??3));
+  revNum.onclick = ()=>makeInlineEdit(revNum, String(sow.revisions??3), v=>{ const n=parseInt(v)||3; saveField(c.id,"sow",{...sow,revisions:n}); });
+  revRow.append(revNum, el("span",{style:{fontSize:"12px",color:"var(--ink-muted)"}},"revisions included"));
+  revBlock.appendChild(revRow);
+  const revNoteSpan = el("div",{class:"overview-edit-field",style:{fontSize:"12px",color:sow.revisionNotes?"var(--ink-mid)":"var(--ink-muted)",marginTop:"8px",lineHeight:"1.6"}}, sow.revisionNotes||"Click to add revision terms…");
+  revNoteSpan.onclick = ()=>makeInlineEdit(revNoteSpan, sow.revisionNotes||"", v=>saveField(c.id,"sow",{...sow,revisionNotes:v}));
+  revBlock.appendChild(revNoteSpan);
+  revCard.appendChild(revBlock);
+
+  const notesBlock = el("div",{class:"surface",style:{padding:"16px 18px"}});
+  notesBlock.innerHTML = `<div class="section-label" style="margin-bottom:8px">General Scope Notes</div>`;
+  const snSpan = el("div",{class:"overview-edit-field",style:{fontSize:"12px",color:sow.scopeNotes?"var(--ink-mid)":"var(--ink-muted)",lineHeight:"1.7",whiteSpace:"pre-wrap",minHeight:"60px"}}, sow.scopeNotes||"Click to add scope notes…");
+  snSpan.onclick = ()=>{
+    const ta = el("textarea",{style:{width:"100%",background:"var(--cream-d)",border:"1.5px solid var(--black-s)",borderRadius:"7px",padding:"8px 12px",fontSize:"12px",fontFamily:"var(--ff-sans)",lineHeight:"1.7",resize:"vertical",outline:"none",minHeight:"80px"}}); ta.value=sow.scopeNotes||"";
+    const sb = el("button",{class:"remark-log-btn",style:{fontSize:"10px",padding:"5px 12px",marginTop:"6px"}},"Save");
+    sb.onclick=()=>saveField(c.id,"sow",{...sow,scopeNotes:ta.value.trim()});
+    snSpan.replaceWith(ta); ta.after(sb); ta.focus();
+  };
+  notesBlock.appendChild(snSpan);
+  revCard.appendChild(notesBlock);
+  container.appendChild(revCard);
+
+  // Included / Excluded two-col
+  const cols = el("div",{style:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"16px"}});
+  ["included","excluded"].forEach(type => {
+    const isIncl = type==="included";
+    const items = sow[type]||[];
+    const col = el("div",{class:"surface",style:{padding:"16px 18px"}});
+    const colHdr = el("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"12px"}});
+    colHdr.innerHTML = `<div style="font-size:10px;font-weight:700;color:${isIncl?"var(--green)":"var(--red)"};letter-spacing:0.1em;text-transform:uppercase">${isIncl?"✓ Included":"✕ Excluded"}</div>`;
+    const addItemBtn = el("button",{class:"access-copy-btn",style:{fontSize:"10px",padding:"3px 10px"}},`+ Add`);
+    colHdr.appendChild(addItemBtn); col.appendChild(colHdr);
+
+    const list = el("div");
+    const renderList = () => {
+      list.innerHTML = "";
+      (sow[type]||[]).forEach((item,i) => {
+        const row = el("div",{style:{display:"flex",alignItems:"center",gap:"8px",padding:"6px 0",borderBottom:"1px solid var(--border-l)"}});
+        const dot = el("span",{style:{color:isIncl?"var(--green)":"var(--red)",fontSize:"10px",flexShrink:"0"}}, isIncl?"✓":"✕");
+        const txt = el("span",{class:"overview-edit-field",style:{flex:"1",fontSize:"13px",color:"var(--black-s)"}},item);
+        txt.onclick=()=>makeInlineEdit(txt,item,v=>{ const arr=[...(sow[type]||[])]; arr[i]=v; saveField(c.id,"sow",{...sow,[type]:arr}); });
+        const rm = el("button",{class:"del-rm-btn",style:{padding:"2px 6px",fontSize:"10px"}},"✕");
+        rm.onclick=()=>{ const arr=(sow[type]||[]).filter((_,j)=>j!==i); saveField(c.id,"sow",{...sow,[type]:arr}); };
+        row.append(dot,txt,rm); list.appendChild(row);
+      });
+      if (!items.length) list.innerHTML=`<div style="font-size:12px;color:var(--ink-muted);padding:8px 0">Nothing listed yet.</div>`;
+    };
+    renderList(); col.appendChild(list);
+
+    const inp = el("input",{class:"del-edit-input",type:"text",placeholder:`Add ${type} item…`,style:{marginTop:"12px",display:"none"}});
+    const saveItem = ()=>{ if(!inp.value.trim()) return; const arr=[...(sow[type]||[]),inp.value.trim()]; inp.value=""; inp.style.display="none"; saveField(c.id,"sow",{...sow,[type]:arr}); };
+    inp.addEventListener("keydown",e=>{ if(e.key==="Enter")saveItem(); if(e.key==="Escape")inp.style.display="none"; });
+    addItemBtn.onclick=()=>{ inp.style.display=inp.style.display==="none"?"block":"none"; if(inp.style.display==="block")inp.focus(); };
+    const saveItemBtn=el("button",{class:"remark-log-btn",style:{fontSize:"10px",padding:"5px 12px",marginTop:"6px",display:"none"}},"Add");
+    saveItemBtn.onclick=saveItem;
+    inp.addEventListener("focus",()=>saveItemBtn.style.display="inline-flex");
+    col.append(inp,saveItemBtn);
+    cols.appendChild(col);
+  });
+  container.appendChild(cols);
+}
+
+// ─── TIMELINE / MILESTONES ───────────────────
+const MILESTONE_TYPES = ["Kickoff","Design Review","Development","Content Handoff","Review Round","Client Approval","Launch","Handoff","Invoice Due","Follow-up","Custom"];
+const MILESTONE_STATUS = ["upcoming","in-progress","done","delayed"];
+const MS_COLOR = { upcoming:"var(--blue)", "in-progress":"var(--amber)", done:"var(--green)", delayed:"var(--red)" };
+const MS_BG = { upcoming:"var(--blue-l)", "in-progress":"var(--amber-l)", done:"var(--green-l)", delayed:"var(--red-l)" };
+
+function renderTimeline(c, container) {
+  const milestones = [...(c.milestones||[])].sort((a,b)=>a.date.localeCompare(b.date));
+  const today = tod();
+
+  const hdr = el("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:"20px"}});
+  hdr.innerHTML = `<div><div class="section-label" style="margin-bottom:2px">Project Timeline & Milestones</div>
+  <div style="font-size:11px;color:var(--ink-muted)">Key dates — kickoff, reviews, launch, handoff, follow-ups.</div></div>`;
+  const addBtn = el("button",{class:"remark-log-btn",style:{fontSize:"11px",padding:"8px 16px",whiteSpace:"nowrap"}},`+ Add Milestone`);
+  hdr.appendChild(addBtn); container.appendChild(hdr);
+
+  // Add form
+  const addForm = el("div",{class:"surface",style:{marginBottom:"20px",padding:"18px 20px",display:"none"}});
+  addForm.innerHTML = `<div style="font-size:11px;font-weight:700;color:var(--black-s);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:14px">New Milestone</div>`;
+  const row1 = el("div",{style:{display:"grid",gridTemplateColumns:"2fr 1fr 1fr auto",gap:"10px",alignItems:"end"}});
+  const mTitle = el("input",{class:"del-edit-input",type:"text",placeholder:"Milestone name"});
+  const mType = el("select",{class:"del-edit-input"}); MILESTONE_TYPES.forEach(t=>mType.appendChild(el("option",{value:t},t)));
+  const mDate = el("input",{class:"del-edit-input",type:"date"}); mDate.value=today;
+  const mStatus = el("select",{class:"del-edit-input"}); MILESTONE_STATUS.forEach(s=>mStatus.appendChild(el("option",{value:s},s)));
+  const saveMs = el("button",{class:"remark-log-btn",style:{fontSize:"11px",padding:"8px 14px",whiteSpace:"nowrap"}},"Save");
+  const mNotes = el("input",{class:"del-edit-input",type:"text",placeholder:"Notes (optional)",style:{marginTop:"8px"}});
+  saveMs.onclick=()=>{
+    if(!mTitle.value.trim()||!mDate.value) return;
+    const nm={id:"ms"+uid(),title:mTitle.value.trim(),type:mType.value,date:mDate.value,status:mStatus.value,notes:mNotes.value.trim()};
+    mTitle.value=""; mNotes.value=""; mDate.value=today;
+    addForm.style.display="none";
+    saveField(c.id,"milestones",[...(c.milestones||[]),nm]);
+  };
+  mTitle.addEventListener("keydown",e=>{ if(e.key==="Enter")saveMs.click(); });
+  [mTitle,mType,mDate,mStatus,saveMs].forEach(x=>row1.appendChild(x));
+  addForm.appendChild(row1); addForm.appendChild(mNotes);
+  const cancelMs=el("button",{class:"btn-cancel",style:{fontSize:"10px",padding:"5px 12px",marginTop:"8px"}},"Cancel");
+  cancelMs.onclick=()=>addForm.style.display="none"; addForm.appendChild(cancelMs);
+  container.appendChild(addForm);
+  addBtn.onclick=()=>{ addForm.style.display=addForm.style.display==="none"?"block":"none"; if(addForm.style.display==="block")mTitle.focus(); };
+
+  if (!milestones.length) {
+    const empty=el("div",{class:"surface",style:{textAlign:"center",padding:"36px",color:"var(--ink-muted)",fontSize:"13px"}});
+    empty.innerHTML=`<div style="font-size:32px;margin-bottom:10px">📅</div>No milestones yet. Add your project timeline above.`;
+    container.appendChild(empty); return;
+  }
+
+  // Timeline visual
+  const timeline = el("div",{style:{position:"relative",paddingLeft:"24px"}});
+  // Vertical line
+  const line = el("div",{style:{position:"absolute",left:"8px",top:"8px",bottom:"8px",width:"2px",background:"var(--border)",borderRadius:"2px"}});
+  timeline.appendChild(line);
+
+  milestones.forEach((m,i) => {
+    const isPast = m.date < today;
+    const isToday = m.date === today;
+    const dotColor = MS_COLOR[m.status]||"var(--ink-muted)";
+    const wrap = el("div",{style:{display:"flex",gap:"16px",alignItems:"flex-start",marginBottom:"16px",position:"relative"}});
+    // Dot
+    const dot = el("div",{style:{width:"16px",height:"16px",borderRadius:"50%",background:dotColor,flexShrink:"0",border:"2px solid white",boxShadow:"0 0 0 2px "+dotColor,marginTop:"10px",zIndex:"1"}});
+    const card = el("div",{class:"surface",style:{flex:"1",padding:"14px 16px",opacity:isPast&&m.status!=="done"?"0.7":"1"}});
+    const cardTop = el("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:"6px"}});
+    const titleSpan = el("span",{class:"overview-edit-field",style:{fontWeight:"700",fontSize:"13px",color:"var(--black-s)"}},m.title);
+    titleSpan.onclick=()=>makeInlineEdit(titleSpan,m.title,v=>saveField(c.id,"milestones",(c.milestones||[]).map(x=>x.id===m.id?{...x,title:v}:x)));
+    const right = el("div",{style:{display:"flex",gap:"6px",alignItems:"center"}});
+    const statusBadge = el("span",{style:{fontSize:"10px",fontWeight:"700",padding:"3px 9px",borderRadius:"20px",background:MS_BG[m.status],color:MS_COLOR[m.status],cursor:"pointer"}},m.status);
+    statusBadge.onclick=()=>{ const s=MILESTONE_STATUS; const next=s[(s.indexOf(m.status)+1)%s.length]; saveField(c.id,"milestones",(c.milestones||[]).map(x=>x.id===m.id?{...x,status:next}:x)); };
+    const delMs=el("button",{class:"access-del-btn",style:{padding:"2px 6px",fontSize:"10px"}},"✕");
+    delMs.onclick=()=>saveField(c.id,"milestones",(c.milestones||[]).filter(x=>x.id!==m.id));
+    right.append(statusBadge,delMs); cardTop.append(titleSpan,right); card.appendChild(cardTop);
+    const meta = el("div",{style:{display:"flex",gap:"12px",fontSize:"11px",color:"var(--ink-muted)",fontFamily:"var(--ff-mono)",flexWrap:"wrap"}});
+    const dateSpan = el("span",{class:"overview-edit-field"},`📅 ${m.date}${isToday?" · Today":""}`);
+    dateSpan.onclick=()=>{
+      const inp=el("input",{class:"del-edit-input",type:"date",style:{width:"150px",fontSize:"11px",padding:"3px 6px"}}); inp.value=m.date;
+      dateSpan.replaceWith(inp); inp.focus();
+      const commit=()=>{ saveField(c.id,"milestones",(c.milestones||[]).map(x=>x.id===m.id?{...x,date:inp.value}:x)); };
+      inp.addEventListener("blur",commit); inp.addEventListener("change",commit);
+    };
+    meta.appendChild(dateSpan);
+    meta.appendChild(el("span",{},`· ${m.type}`));
+    if(m.notes) meta.appendChild(el("span",{style:{color:"var(--ink-mid)"}},`· ${m.notes}`));
+    card.appendChild(meta);
+    wrap.append(dot,card); timeline.appendChild(wrap);
+  });
+  container.appendChild(timeline);
+}
+
+// ─── INVOICES ────────────────────────────────
+const INV_STATUS = ["draft","sent","overdue","paid","cancelled"];
+const INV_STATUS_COLOR = { draft:"var(--ink-muted)", sent:"var(--blue)", overdue:"var(--red)", paid:"var(--green)", cancelled:"var(--ink-muted)" };
+const INV_STATUS_BG = { draft:"var(--cream-d)", sent:"var(--blue-l)", overdue:"var(--red-l)", paid:"var(--green-l)", cancelled:"var(--cream-d)" };
+
+function renderInvoices(c, container) {
+  const invoices = [...(c.invoices||[])].sort((a,b)=>b.date.localeCompare(a.date));
+  const today = tod();
+
+  const hdr = el("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:"20px"}});
+  hdr.innerHTML=`<div><div class="section-label" style="margin-bottom:2px">Invoice Log</div>
+  <div style="font-size:11px;color:var(--ink-muted)">Track every invoice raised — number, amount, due date, and status.</div></div>`;
+  const addBtn=el("button",{class:"remark-log-btn",style:{fontSize:"11px",padding:"8px 16px",whiteSpace:"nowrap"}},`+ New Invoice`);
+  hdr.appendChild(addBtn); container.appendChild(hdr);
+
+  // Stats
+  const totalRaised = invoices.reduce((s,i)=>s+i.amount,0);
+  const totalPaid = invoices.filter(i=>i.status==="paid").reduce((s,i)=>s+i.amount,0);
+  const totalOverdue = invoices.filter(i=>i.status==="overdue").reduce((s,i)=>s+i.amount,0);
+  const statsRow = el("div",{style:{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:"10px",marginBottom:"20px"}});
+  [
+    {num:invoices.length, lbl:"Invoices Raised", col:"var(--black-s)"},
+    {num:inr(totalRaised), lbl:"Total Invoiced", col:"var(--black-s)"},
+    {num:inr(totalPaid), lbl:"Collected", col:"var(--green)"},
+    {num:inr(totalOverdue), lbl:"Overdue", col:totalOverdue>0?"var(--red)":"var(--ink-muted)"},
+  ].forEach(s=>{ const card=el("div",{class:"surface",style:{textAlign:"center",padding:"14px 10px"}}); card.innerHTML=`<div style="font-family:var(--ff-serif);font-size:22px;font-weight:600;color:${s.col}">${s.num}</div><div style="font-size:9px;font-weight:700;color:var(--ink-muted);letter-spacing:0.1em;text-transform:uppercase;margin-top:4px">${s.lbl}</div>`; statsRow.appendChild(card); });
+  container.appendChild(statsRow);
+
+  // Add form
+  const addForm=el("div",{class:"surface",style:{marginBottom:"20px",padding:"18px 20px",display:"none"}});
+  addForm.innerHTML=`<div style="font-size:11px;font-weight:700;color:var(--black-s);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:14px">New Invoice</div>`;
+  const grid=el("div",{style:{display:"grid",gridTemplateColumns:"1fr 1fr 1fr 1fr",gap:"10px",marginBottom:"10px"}});
+  const iNum=el("input",{class:"del-edit-input",type:"text",placeholder:"Invoice # (e.g. HOC-024)"});
+  const iAmt=el("input",{class:"del-edit-input",type:"number",placeholder:"Amount (₹)"});
+  const iDate=el("input",{class:"del-edit-input",type:"date"}); iDate.value=today;
+  const iDue=el("input",{class:"del-edit-input",type:"date"});
+  const iStatus=el("select",{class:"del-edit-input"}); INV_STATUS.forEach(s=>iStatus.appendChild(el("option",{value:s},s))); iStatus.value="sent";
+  const iNotes=el("input",{class:"del-edit-input",type:"text",placeholder:"Notes (optional)"});
+  [iNum,iAmt,iDate,iDue].forEach(x=>grid.appendChild(x));
+  addForm.appendChild(grid);
+  const grid2=el("div",{style:{display:"grid",gridTemplateColumns:"1fr 2fr",gap:"10px",marginBottom:"10px"}});
+  grid2.append(iStatus,iNotes); addForm.appendChild(grid2);
+  const formFooter=el("div",{style:{display:"flex",gap:"8px",justifyContent:"flex-end"}});
+  const cancelI=el("button",{class:"btn-cancel",style:{fontSize:"11px",padding:"7px 14px"}},"Cancel");
+  const saveI=el("button",{class:"remark-log-btn",style:{fontSize:"11px",padding:"7px 18px"}},"Save Invoice");
+  saveI.onclick=()=>{
+    if(!iNum.value.trim()||!iAmt.value||!iDate.value) { showToast("Invoice #, amount, and date required"); return; }
+    const ni={id:"inv"+uid(),number:iNum.value.trim(),amount:parseInt(iAmt.value)||0,date:iDate.value,dueDate:iDue.value,status:iStatus.value,notes:iNotes.value.trim()};
+    iNum.value=""; iAmt.value=""; iDate.value=today; iDue.value=""; iNotes.value=""; iStatus.value="sent";
+    addForm.style.display="none";
+    saveField(c.id,"invoices",[...(c.invoices||[]),ni]);
+  };
+  cancelI.onclick=()=>addForm.style.display="none";
+  iNum.addEventListener("keydown",e=>{ if(e.key==="Enter")saveI.click(); });
+  formFooter.append(cancelI,saveI); addForm.appendChild(formFooter);
+  container.appendChild(addForm);
+  addBtn.onclick=()=>{ addForm.style.display=addForm.style.display==="none"?"block":"none"; if(addForm.style.display==="block")iNum.focus(); };
+
+  if (!invoices.length) {
+    const empty=el("div",{class:"surface",style:{textAlign:"center",padding:"36px",color:"var(--ink-muted)",fontSize:"13px"}});
+    empty.innerHTML=`<div style="font-size:32px;margin-bottom:10px">🧾</div>No invoices logged yet.`;
+    container.appendChild(empty); return;
+  }
+
+  // Table
+  const wrap=el("div",{class:"surface",style:{padding:"0",overflow:"hidden"}});
+  const table=el("table",{class:"del-table"});
+  table.innerHTML=`<thead><tr><th>Invoice #</th><th>Date Raised</th><th>Due Date</th><th style="text-align:right">Amount</th><th>Status</th><th>Notes</th><th style="width:36px"></th></tr></thead>`;
+  const tbody=el("tbody");
+  invoices.forEach(inv=>{
+    const isOverdue = inv.dueDate && inv.dueDate < today && inv.status!=="paid" && inv.status!=="cancelled";
+    const tr=el("tr",{style:{background:isOverdue?"rgba(192,57,43,0.03)":""}});
+    // Invoice #
+    const td0=el("td"); const numSpan=el("span",{class:"overview-edit-field",style:{fontWeight:"700",fontFamily:"var(--ff-mono)",fontSize:"12px",color:"var(--black-s)"}},inv.number);
+    numSpan.onclick=()=>makeInlineEdit(numSpan,inv.number,v=>saveField(c.id,"invoices",(c.invoices||[]).map(x=>x.id===inv.id?{...x,number:v}:x)));
+    td0.appendChild(numSpan); tr.appendChild(td0);
+    // Date
+    const td1=el("td",{style:{fontSize:"12px",fontFamily:"var(--ff-mono)",color:"var(--ink-mid)"}},inv.date); tr.appendChild(td1);
+    // Due date
+    const td2=el("td"); const dueSpan=el("span",{style:{fontSize:"12px",fontFamily:"var(--ff-mono)",color:isOverdue?"var(--red)":"var(--ink-mid)"}},inv.dueDate||(isOverdue?"OVERDUE":"—"));
+    td2.appendChild(dueSpan); tr.appendChild(td2);
+    // Amount
+    const td3=el("td",{style:{textAlign:"right",fontFamily:"var(--ff-serif)",fontSize:"14px",fontWeight:"600",color:"var(--black-s)"}}); 
+    const amtSpan=el("span",{class:"overview-edit-field"},inr(inv.amount));
+    amtSpan.onclick=()=>makeInlineEdit(amtSpan,String(inv.amount),v=>saveField(c.id,"invoices",(c.invoices||[]).map(x=>x.id===inv.id?{...x,amount:parseInt(v)||0}:x)));
+    td3.appendChild(amtSpan); tr.appendChild(td3);
+    // Status
+    const td4=el("td"); const sb=el("span",{style:{fontSize:"10px",fontWeight:"700",padding:"3px 9px",borderRadius:"20px",cursor:"pointer",background:INV_STATUS_BG[inv.status],color:INV_STATUS_COLOR[inv.status]}},inv.status);
+    sb.onclick=()=>{ const s=INV_STATUS; const next=s[(s.indexOf(inv.status)+1)%s.length]; saveField(c.id,"invoices",(c.invoices||[]).map(x=>x.id===inv.id?{...x,status:next}:x)); };
+    td4.appendChild(sb); tr.appendChild(td4);
+    // Notes
+    const td5=el("td"); const notesSpan=el("span",{class:"overview-edit-field",style:{fontSize:"11px",color:"var(--ink-muted)"}},inv.notes||"—");
+    notesSpan.onclick=()=>makeInlineEdit(notesSpan,inv.notes||"",v=>saveField(c.id,"invoices",(c.invoices||[]).map(x=>x.id===inv.id?{...x,notes:v}:x)));
+    td5.appendChild(notesSpan); tr.appendChild(td5);
+    // Delete
+    const td6=el("td"); const delBtn=el("button",{class:"del-rm-btn"},`✕`);
+    delBtn.onclick=()=>{ if(!confirm(`Remove invoice ${inv.number}?`)) return; saveField(c.id,"invoices",(c.invoices||[]).filter(x=>x.id!==inv.id)); };
+    td6.appendChild(delBtn); tr.appendChild(td6);
+    tbody.appendChild(tr);
+  });
+  table.appendChild(tbody); wrap.appendChild(table); container.appendChild(wrap);
+}
+
+// ─── FEEDBACK & NPS ──────────────────────────
+function renderFeedback(c, container) {
+  const feedback = [...(c.feedback||[])].sort((a,b)=>b.date.localeCompare(a.date));
+
+  const hdr = el("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:"20px"}});
+  hdr.innerHTML=`<div><div class="section-label" style="margin-bottom:2px">Feedback & NPS</div>
+  <div style="font-size:11px;color:var(--ink-muted)">Log client satisfaction at key milestones. Identify referral candidates and churn risks.</div></div>`;
+  const addBtn=el("button",{class:"remark-log-btn",style:{fontSize:"11px",padding:"8px 16px",whiteSpace:"nowrap"}},`+ Log Feedback`);
+  hdr.appendChild(addBtn); container.appendChild(hdr);
+
+  // NPS summary
+  if (feedback.length) {
+    const avg = Math.round(feedback.reduce((s,f)=>s+f.score,0)/feedback.length);
+    const latest = feedback[0];
+    const npsColor = avg>=8?"var(--green)":avg>=6?"var(--amber)":"var(--red)";
+    const npsLabel = avg>=9?"Promoter — ask for referral":avg>=7?"Passive — nurture":avg>=5?"Neutral":"Detractor — at risk";
+    const summCard=el("div",{style:{display:"grid",gridTemplateColumns:"auto 1fr",gap:"20px",background:"var(--card)",border:"1px solid var(--border-l)",borderRadius:"12px",padding:"20px 24px",marginBottom:"20px",alignItems:"center"}});
+    summCard.innerHTML=`
+      <div style="text-align:center">
+        <div style="font-family:var(--ff-serif);font-size:52px;font-weight:600;color:${npsColor};line-height:1">${avg}</div>
+        <div style="font-size:9px;font-weight:700;color:var(--ink-muted);letter-spacing:0.1em;text-transform:uppercase;margin-top:4px">Avg Score</div>
+      </div>
+      <div>
+        <div style="font-size:14px;font-weight:700;color:${npsColor};margin-bottom:4px">${npsLabel}</div>
+        <div style="font-size:11px;color:var(--ink-muted);margin-bottom:8px">Based on ${feedback.length} feedback entr${feedback.length===1?"y":"ies"}</div>
+        <div style="font-size:12px;color:var(--ink-mid);font-style:italic">"${latest.comment||"No comment."}"</div>
+        <div style="font-size:10px;color:var(--ink-muted);margin-top:4px;font-family:var(--ff-mono)">Latest · ${latest.date} · ${latest.milestone||"General"}</div>
+      </div>`;
+    container.appendChild(summCard);
+  }
+
+  // Add form
+  const addForm=el("div",{class:"surface",style:{marginBottom:"20px",padding:"18px 20px",display:"none"}});
+  addForm.innerHTML=`<div style="font-size:11px;font-weight:700;color:var(--black-s);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:14px">Log Feedback</div>`;
+  const grid=el("div",{style:{display:"grid",gridTemplateColumns:"2fr 1fr",gap:"12px",marginBottom:"12px"}});
+  const fMilestone=el("input",{class:"del-edit-input",type:"text",placeholder:"Milestone (e.g. Post-launch, Month 1 review)"}); 
+  const fDate=el("input",{class:"del-edit-input",type:"date"}); fDate.value=tod();
+  grid.append(fMilestone,fDate); addForm.appendChild(grid);
+  // Score selector
+  const scoreLbl=el("div",{style:{fontSize:"9px",fontWeight:"700",color:"var(--ink-muted)",letterSpacing:"0.1em",textTransform:"uppercase",marginBottom:"8px"}},"Score (1 = worst, 10 = best)");
+  const scoreRow=el("div",{style:{display:"flex",gap:"6px",marginBottom:"14px",flexWrap:"wrap"}});
+  let selectedScore=8;
+  const scoreBtns=[];
+  for(let i=1;i<=10;i++){
+    const btn=el("button",{style:{width:"38px",height:"38px",borderRadius:"8px",border:"1px solid var(--border)",background:i===selectedScore?"var(--black-s)":"var(--cream-d)",color:i===selectedScore?"var(--cream)":"var(--ink-mid)",fontWeight:"700",fontSize:"13px",cursor:"pointer",fontFamily:"var(--ff-serif)",transition:"all 0.12s"}},String(i));
+    btn.onclick=()=>{ selectedScore=i; scoreBtns.forEach((b,j)=>{ b.style.background=j+1===i?"var(--black-s)":"var(--cream-d)"; b.style.color=j+1===i?"var(--cream)":"var(--ink-mid)"; }); };
+    scoreBtns.push(btn); scoreRow.appendChild(btn);
+  }
+  addForm.appendChild(scoreLbl); addForm.appendChild(scoreRow);
+  const fComment=el("textarea",{class:"del-edit-input",style:{minHeight:"70px",resize:"vertical"}}); fComment.placeholder="What did the client say? Any specific feedback, praise, or concern…";
+  addForm.appendChild(fComment);
+  const formFooter=el("div",{style:{display:"flex",gap:"8px",justifyContent:"flex-end",marginTop:"10px"}});
+  const cancelF=el("button",{class:"btn-cancel",style:{fontSize:"11px",padding:"7px 14px"}},"Cancel");
+  const saveF=el("button",{class:"remark-log-btn",style:{fontSize:"11px",padding:"7px 18px"}},"Save Feedback");
+  saveF.onclick=()=>{
+    const nf={id:"fb"+uid(),score:selectedScore,milestone:fMilestone.value.trim()||"General",date:fDate.value||tod(),comment:fComment.value.trim()};
+    fMilestone.value=""; fComment.value=""; fDate.value=tod(); selectedScore=8;
+    scoreBtns.forEach((b,j)=>{ b.style.background=j+1===8?"var(--black-s)":"var(--cream-d)"; b.style.color=j+1===8?"var(--cream)":"var(--ink-mid)"; });
+    addForm.style.display="none";
+    saveField(c.id,"feedback",[...(c.feedback||[]),nf]);
+  };
+  cancelF.onclick=()=>addForm.style.display="none";
+  formFooter.append(cancelF,saveF); addForm.appendChild(formFooter);
+  container.appendChild(addForm);
+  addBtn.onclick=()=>{ addForm.style.display=addForm.style.display==="none"?"block":"none"; if(addForm.style.display==="block")fMilestone.focus(); };
+
+  if (!feedback.length) {
+    const empty=el("div",{class:"surface",style:{textAlign:"center",padding:"36px",color:"var(--ink-muted)",fontSize:"13px"}});
+    empty.innerHTML=`<div style="font-size:32px;margin-bottom:10px">⭐</div>No feedback logged yet. Score this client after key milestones.`;
+    container.appendChild(empty); return;
+  }
+
+  // Feedback list
+  feedback.forEach(f => {
+    const scoreColor=f.score>=8?"var(--green)":f.score>=6?"var(--amber)":"var(--red)";
+    const scoreBg=f.score>=8?"var(--green-l)":f.score>=6?"var(--amber-l)":"var(--red-l)";
+    const card=el("div",{class:"surface",style:{marginBottom:"10px",padding:"16px 18px",display:"grid",gridTemplateColumns:"auto 1fr auto",gap:"16px",alignItems:"start"}});
+    const scoreBox=el("div",{style:{width:"52px",height:"52px",borderRadius:"10px",background:scoreBg,display:"flex",alignItems:"center",justifyContent:"center",flexDirection:"column",flexShrink:"0"}});
+    scoreBox.innerHTML=`<div style="font-family:var(--ff-serif);font-size:24px;font-weight:700;color:${scoreColor};line-height:1">${f.score}</div><div style="font-size:8px;color:${scoreColor};font-weight:700;letter-spacing:0.05em">/10</div>`;
+    const body=el("div");
+    body.innerHTML=`<div style="font-size:13px;font-weight:600;color:var(--black-s);margin-bottom:4px">${f.milestone||"General"}</div>
+    <div style="font-size:12px;color:var(--ink-mid);line-height:1.65;white-space:pre-wrap">${f.comment||"No comment."}</div>
+    <div style="font-size:10px;color:var(--ink-muted);font-family:var(--ff-mono);margin-top:6px">${f.date}</div>`;
+    const delFb=el("button",{class:"access-del-btn",style:{padding:"3px 7px",fontSize:"10px"}},"✕");
+    delFb.onclick=()=>saveField(c.id,"feedback",(c.feedback||[]).filter(x=>x.id!==f.id));
+    card.append(scoreBox,body,delFb); container.appendChild(card);
+  });
 }
 
 // ─── DELIVERABLES ─────────────────────────────
-const DEL_TYPES  = ["Posts","Reels","Stories","Videos","Blogs","Ads","Emails","Pages","Campaigns","Reports","Assets","Hours","Sessions","Other"];
-const DEL_UNITS  = ["posts","reels","stories","videos","blogs","ads","emails","pages","campaigns","reports","assets","hours","sessions","items"];
+const DEL_TYPES  = ["Marketing","Social Media","AI Automation","Websites"];
+const DEL_UNITS_MAP = {
+  "Marketing": ["campaigns","ads","emails","pages","blogs","reports","assets","hours","sessions"],
+  "Social Media": ["posts","reels","stories","videos","campaigns","ads","assets","hours"],
+  "AI Automation": ["bots","agents","workflows","automations","systems","hours"],
+  "Websites": ["websites","pages","items","sessions","hours"]
+};
+const DEL_UNITS  = ["posts","reels","stories","videos","blogs","ads","emails","pages","campaigns","reports","assets","hours","sessions","items","websites","automations","workflows","bots","agents","systems"];
 
 function renderDeliverables(c, container) {
   const hdr = el("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"16px"}});
@@ -3929,7 +4728,22 @@ function renderDeliverables(c, container) {
   const nType = el("select",{class:"del-edit-input"}); DEL_TYPES.forEach(t=>{const o=el("option",{value:t},t);nType.appendChild(o);});
   const nProm = el("input",{class:"del-edit-input",type:"number",placeholder:"Promised",min:0,value:0});
   const nDel  = el("input",{class:"del-edit-input",type:"number",placeholder:"Delivered",min:0,value:0});
-  const nUnit = el("select",{class:"del-edit-input"}); DEL_UNITS.forEach(u=>{const o=el("option",{value:u},u);nUnit.appendChild(o);});
+  const nUnit = el("select",{class:"del-edit-input"}); 
+  
+  // Function to update units based on type
+  const updateUnitsDropdown = (typeVal) => {
+    nUnit.innerHTML = "";
+    const units = DEL_UNITS_MAP[typeVal] || DEL_UNITS;
+    units.forEach(u=>{const o=el("option",{value:u},u);nUnit.appendChild(o);});
+  };
+  
+  // Initialize with first type's units
+  updateUnitsDropdown(DEL_TYPES[0]);
+  
+  // Update units when type changes
+  nType.addEventListener("change", () => {
+    updateUnitsDropdown(nType.value);
+  });
   const nSave = el("button",{class:"remark-log-btn",style:{fontSize:"11px",padding:"8px 14px"}},`Add`);
   nSave.onclick = () => {
     if (!nName.value.trim()) return;
@@ -4028,66 +4842,205 @@ const ACCESS_PLATFORMS = {
 
 function renderAccess(c, container) {
   container.innerHTML = "";
-  const hdr=el("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"16px"}});
-  hdr.innerHTML=`<div class="section-label" style="margin-bottom:0">Access & Credentials</div>`;
-  const addBtn=el("button",{class:"quick-action-btn"},`+ Add Access Item`); hdr.appendChild(addBtn); container.appendChild(hdr);
 
-  const addForm=el("div",{class:"access-add-form surface",style:{marginBottom:"16px",display:"none",gridTemplateColumns:"2fr 1fr 1fr 1.5fr auto"}});
-  const nameIn=el("input",{type:"text",placeholder:"Platform"}); const urlIn=el("input",{type:"text",placeholder:"URL"}); const credIn=el("input",{type:"text",placeholder:"Username"}); const passIn=el("input",{type:"text",placeholder:"Password"});
-  const statusSel=el("select"); [["pending","Pending"],["received","Received"],["na","N/A"]].forEach(([v,l])=>{ statusSel.appendChild(el("option",{value:v},l)); });
-  const saveRowBtn=el("button",{class:"remark-log-btn",style:{fontSize:"11px",padding:"7px 12px",whiteSpace:"nowrap"}},`Add`);
-  saveRowBtn.onclick=()=>{
-    if(!nameIn.value.trim()) return;
-    const newItem={id:"a"+uid(),name:nameIn.value.trim(),url:urlIn.value.trim(),username:credIn.value.trim(),password:passIn.value.trim(),status:statusSel.value,notes:""};
-    nameIn.value=""; urlIn.value=""; credIn.value=""; passIn.value=""; statusSel.value="pending";
+  // ── HEADER ──
+  const hdr = el("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:"20px"}});
+  hdr.innerHTML = `<div>
+    <div class="section-label" style="margin-bottom:2px">Access & Credentials</div>
+    <div style="font-size:11px;color:var(--ink-muted)">All platforms, login IDs, and passwords for this client. Stored in Supabase — not shared externally.</div>
+  </div>`;
+  const addBtn = el("button",{class:"remark-log-btn",style:{fontSize:"11px",padding:"8px 18px",whiteSpace:"nowrap"}},`+ Add Platform`);
+  hdr.appendChild(addBtn);
+  container.appendChild(hdr);
+
+  // ── ADD FORM ──
+  const addForm = el("div",{class:"surface",style:{marginBottom:"20px",padding:"20px 22px",display:"none"}});
+  addForm.innerHTML = `<div style="font-size:12px;font-weight:700;color:var(--black-s);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:16px">Add Platform Access</div>`;
+
+  const grid = el("div",{style:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"12px",marginBottom:"12px"}});
+  const nameIn = el("input",{class:"del-edit-input",type:"text",placeholder:"Platform name (e.g. Google Analytics)"}); nameIn.style.gridColumn="1/-1";
+  const urlIn = el("input",{class:"del-edit-input",type:"text",placeholder:"Login URL (optional)"});
+  const notesIn = el("input",{class:"del-edit-input",type:"text",placeholder:"Notes / context (optional)"});
+  grid.append(nameIn,urlIn,notesIn);
+  addForm.appendChild(grid);
+
+  // ID/Password row
+  const credGrid = el("div",{style:{display:"grid",gridTemplateColumns:"1fr 1fr auto",gap:"12px",alignItems:"end",marginBottom:"12px"}});
+  const credLabel = el("div",{style:{gridColumn:"1/-1",fontSize:"9px",fontWeight:"700",color:"var(--ink-muted)",letterSpacing:"0.1em",textTransform:"uppercase",marginBottom:"-6px"}},`Credentials`);
+  const userIn = el("input",{class:"del-edit-input",type:"text",placeholder:"Username / Email / ID"});
+  const passIn = el("input",{class:"del-edit-input",type:"text",placeholder:"Password"});
+  const statusSel = el("select",{class:"del-edit-input",style:{padding:"8px 10px"}});
+  [["pending","⏳ Pending"],["received","✓ Received"],["na","N/A"]].forEach(([v,l])=>{ statusSel.appendChild(el("option",{value:v},l)); });
+  credGrid.append(credLabel,userIn,passIn,statusSel);
+  addForm.appendChild(credGrid);
+
+  // Extra IDs row (platform-specific additional fields)
+  const extraLabel = el("div",{style:{fontSize:"9px",fontWeight:"700",color:"var(--ink-muted)",letterSpacing:"0.1em",textTransform:"uppercase",marginBottom:"6px"}},`Additional IDs / Codes (optional)`);
+  const extraRow = el("div",{style:{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:"10px",marginBottom:"12px"}});
+  const extra1K = el("input",{class:"del-edit-input",type:"text",placeholder:"Field label (e.g. Client ID)"}); 
+  const extra1V = el("input",{class:"del-edit-input",type:"text",placeholder:"Value"});
+  const extra2K = el("input",{class:"del-edit-input",type:"text",placeholder:"Field label (e.g. API Key)"});
+  const extra2V = el("input",{class:"del-edit-input",type:"text",placeholder:"Value"});
+  const extra3K = el("input",{class:"del-edit-input",type:"text",placeholder:"Field label"});
+  const extra3V = el("input",{class:"del-edit-input",type:"text",placeholder:"Value"});
+  extraRow.append(extra1K,extra1V,extra2K,extra2V,extra3K,extra3V);
+  addForm.appendChild(extraLabel); addForm.appendChild(extraRow);
+
+  const formFooter = el("div",{style:{display:"flex",gap:"8px",justifyContent:"flex-end"}});
+  const cancelFormBtn = el("button",{class:"btn-cancel",style:{fontSize:"11px",padding:"7px 14px"}},`Cancel`);
+  const saveAccessBtn = el("button",{class:"remark-log-btn",style:{fontSize:"11px",padding:"7px 18px"}},`Save Platform`);
+  saveAccessBtn.onclick = () => {
+    if (!nameIn.value.trim()) { showToast("Platform name required"); return; }
+    const extras = [];
+    if(extra1K.value.trim()&&extra1V.value.trim()) extras.push({key:extra1K.value.trim(),val:extra1V.value.trim()});
+    if(extra2K.value.trim()&&extra2V.value.trim()) extras.push({key:extra2K.value.trim(),val:extra2V.value.trim()});
+    if(extra3K.value.trim()&&extra3V.value.trim()) extras.push({key:extra3K.value.trim(),val:extra3V.value.trim()});
+    const newItem = {id:"a"+uid(),name:nameIn.value.trim(),url:urlIn.value.trim(),username:userIn.value.trim(),password:passIn.value.trim(),status:statusSel.value,notes:notesIn.value.trim(),extras};
+    [nameIn,urlIn,userIn,passIn,notesIn,extra1K,extra1V,extra2K,extra2V,extra3K,extra3V].forEach(i=>i.value=""); statusSel.value="pending";
     addForm.style.display="none";
     saveField(c.id,"access",[...c.access,newItem]);
   };
-  [nameIn,urlIn,credIn,passIn].forEach(i=>i.addEventListener("keydown",e=>{ if(e.key==="Enter")saveRowBtn.click(); }));
-  [nameIn,urlIn,credIn,passIn,statusSel,saveRowBtn].forEach(x=>addForm.appendChild(x)); container.appendChild(addForm);
-  addBtn.onclick=()=>{ addForm.style.display=addForm.style.display==="none"?"grid":"none"; if(addForm.style.display==="grid") nameIn.focus(); };
+  cancelFormBtn.onclick=()=>addForm.style.display="none";
+  [nameIn,userIn,passIn].forEach(i=>i.addEventListener("keydown",e=>{ if(e.key==="Enter") saveAccessBtn.click(); }));
+  formFooter.append(cancelFormBtn,saveAccessBtn); addForm.appendChild(formFooter);
+  container.appendChild(addForm);
+  addBtn.onclick=()=>{ addForm.style.display=addForm.style.display==="none"?"block":"none"; if(addForm.style.display==="block") nameIn.focus(); };
 
+  // ── SUGGESTED IMPORTS (when empty) ──
   if (!c.access.length) {
-    const suggested=Object.entries(ACCESS_PLATFORMS).filter(([k])=>c.services?.includes(k)).flatMap(([,v])=>v).filter((v,i,a)=>a.indexOf(v)===i);
+    const suggested = Object.entries(ACCESS_PLATFORMS).filter(([k])=>c.services?.includes(k)).flatMap(([,v])=>v).filter((v,i,a)=>a.indexOf(v)===i);
     if (suggested.length) {
-      const sugBox=el("div",{class:"surface",style:{marginBottom:"16px",padding:"12px 16px"}});
-      sugBox.innerHTML=`<div style="font-size:10px;font-weight:700;color:var(--ink-muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px">Suggested for ${(c.services||[]).join(", ")}</div>`;
-      const chips=el("div",{style:{display:"flex",flexWrap:"wrap",gap:"6px",marginBottom:"10px"}});
-      const selSet=new Set();
+      const sugBox = el("div",{class:"surface",style:{marginBottom:"16px",padding:"16px 18px"}});
+      sugBox.innerHTML = `<div style="font-size:10px;font-weight:700;color:var(--ink-muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px">Suggested for ${(c.services||[]).join(", ")}</div>`;
+      const chips = el("div",{style:{display:"flex",flexWrap:"wrap",gap:"6px",marginBottom:"12px"}});
+      const selSet = new Set();
       suggested.forEach(s=>{ const chip=el("button",{class:"svc-chip"},s); chip.onclick=()=>{ chip.classList.toggle("active"); if(selSet.has(s)) selSet.delete(s); else selSet.add(s); }; chips.appendChild(chip); });
-      const importBtn=el("button",{class:"remark-log-btn",style:{fontSize:"11px",padding:"7px 14px"}},`Import Selected`);
-      importBtn.onclick=()=>{ if(!selSet.size){showToast("Select at least one");return;} const newItems=[...selSet].map(n=>({id:"a"+uid(),name:n,url:"",username:"",password:"",status:"pending",notes:""})); saveField(c.id,"access",[...c.access,...newItems]); };
+      const importBtn = el("button",{class:"remark-log-btn",style:{fontSize:"11px",padding:"7px 14px"}},`Import Selected`);
+      importBtn.onclick=()=>{ if(!selSet.size){showToast("Select at least one");return;} const newItems=[...selSet].map(n=>({id:"a"+uid(),name:n,url:"",username:"",password:"",status:"pending",notes:"",extras:[]})); saveField(c.id,"access",[...c.access,...newItems]); };
       sugBox.appendChild(chips); sugBox.appendChild(importBtn); container.appendChild(sugBox);
     }
-    container.appendChild(el("div",{class:"surface",style:{textAlign:"center",padding:"30px",color:"var(--ink-muted)",fontSize:"13px"}},"No access items yet."));
+    const empty = el("div",{class:"surface",style:{textAlign:"center",padding:"36px",color:"var(--ink-muted)",fontSize:"13px"}});
+    empty.innerHTML = `<div style="font-size:32px;margin-bottom:10px">🔑</div>No access items yet. Add a platform above or import suggestions.`;
+    container.appendChild(empty);
     return;
   }
 
-  const wrap=el("div",{class:"surface",style:{padding:"0",overflow:"hidden",marginBottom:"12px"}});
-  const table=el("table",{class:"access-table"});
-  table.innerHTML=`<thead><tr><th>Platform</th><th>URL</th><th>Username</th><th>Password</th><th>Status</th><th>Notes</th><th style="width:40px"></th></tr></thead>`;
-  const tbody=el("tbody");
-  c.access.forEach((a,i)=>{
-    const tr=el("tr");
-    const td0=el("td"); const ns=el("span",{class:"overview-edit-field",style:{fontWeight:"500"}},a.name||"—"); ns.onclick=()=>makeInlineEdit(ns,a.name,v=>{ saveField(c.id,"access",c.access.map((x,j)=>j===i?{...x,name:v}:x)); }); td0.appendChild(ns); tr.appendChild(td0);
-    const td1=el("td"); if(a.url){td1.appendChild(el("a",{href:a.url,target:"_blank",style:{fontSize:"11px",color:"#1e40af",textDecoration:"none",fontFamily:"var(--ff-mono)"}},a.url.replace("https://","").slice(0,28)+(a.url.length>28?"…":"")));}else{const us=el("span",{class:"overview-edit-field",style:{fontSize:"11px",color:"var(--ink-muted)",fontFamily:"var(--ff-mono)"}},"—"); us.onclick=()=>makeInlineEdit(us,a.url||"",v=>{saveField(c.id,"access",c.access.map((x,j)=>j===i?{...x,url:v}:x));}); td1.appendChild(us);} tr.appendChild(td1);
-    const td2=el("td"); const userWrap=el("div",{style:{display:"flex",alignItems:"center",gap:"5px"}}); const uText=el("span",{class:"overview-edit-field",style:{fontSize:"12px",fontFamily:"var(--ff-mono)"}},a.username||"—"); uText.onclick=()=>makeInlineEdit(uText,a.username||"",v=>{saveField(c.id,"access",c.access.map((x,j)=>j===i?{...x,username:v}:x));}); userWrap.appendChild(uText); if(a.username){const cp=el("button",{class:"access-copy-btn"},`⎘`); cp.onclick=(e)=>{e.stopPropagation();navigator.clipboard.writeText(a.username);showToast("Copied ✓");}; userWrap.appendChild(cp);} td2.appendChild(userWrap); tr.appendChild(td2);
-    const td3=el("td"); const pwWrap=el("div",{style:{display:"flex",alignItems:"center",gap:"5px"}}); let pwV=false; const pwText=el("span",{class:"overview-edit-field",style:{fontSize:"12px",fontFamily:"var(--ff-mono)"}},a.password?"••••••••":"—"); pwText.onclick=()=>{ if(!pwV&&a.password){pwV=true;pwText.textContent=a.password;return;} makeInlineEdit(pwText,a.password||"",v=>{saveField(c.id,"access",c.access.map((x,j)=>j===i?{...x,password:v}:x)); pwV=false;}); }; pwWrap.appendChild(pwText); if(a.password){const cp=el("button",{class:"access-copy-btn"},`⎘`); cp.onclick=(e)=>{e.stopPropagation();navigator.clipboard.writeText(a.password);showToast("Copied ✓");}; pwWrap.appendChild(cp);} td3.appendChild(pwWrap); tr.appendChild(td3);
-    const td4=el("td"); const cycleSt=()=>{ const states=["pending","received","na"]; const next=states[(states.indexOf(a.status||"pending")+1)%3]; saveField(c.id,"access",c.access.map((x,j)=>j===i?{...x,status:next}:x)); }; const sb=el("span",{class:`access-badge ${a.status||"pending"}`,onclick:cycleSt},a.status==="received"?"✓ Received":a.status==="na"?"N/A":"Pending"); td4.appendChild(sb); tr.appendChild(td4);
-    const td5=el("td"); const notesSpan=el("span",{class:"overview-edit-field",style:{fontSize:"11px",color:"var(--ink-muted)"}},a.notes||"Add note…"); notesSpan.onclick=()=>makeInlineEdit(notesSpan,a.notes||"",v=>{saveField(c.id,"access",c.access.map((x,j)=>j===i?{...x,notes:v}:x));}); td5.appendChild(notesSpan); tr.appendChild(td5);
-    const td6=el("td"); const delBtn=el("button",{class:"access-del-btn"},`✕`); delBtn.onclick=()=>{ if(!confirm(`Remove "${a.name}"?`)) return; saveField(c.id,"access",c.access.filter((_,j)=>j!==i)); }; td6.appendChild(delBtn); tr.appendChild(td6);
-    tbody.appendChild(tr);
+  // ── ACCESS CARDS LIST ──
+  const stats = el("div",{style:{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:"10px",marginBottom:"20px"}});
+  const total = c.access.length;
+  const received = c.access.filter(a=>a.status==="received").length;
+  const pending = c.access.filter(a=>a.status==="pending").length;
+  [
+    {num:total, lbl:"Total Platforms", col:"var(--black-s)"},
+    {num:received, lbl:"Access Received", col:"var(--green)"},
+    {num:pending, lbl:"Pending", col:pending>0?"var(--amber)":"var(--ink-muted)"},
+  ].forEach(s=>{ const card=el("div",{class:"surface",style:{textAlign:"center",padding:"14px 10px"}}); card.innerHTML=`<div style="font-family:var(--ff-serif);font-size:24px;font-weight:600;color:${s.col}">${s.num}</div><div style="font-size:9px;font-weight:700;color:var(--ink-muted);letter-spacing:0.1em;text-transform:uppercase;margin-top:4px">${s.lbl}</div>`; stats.appendChild(card); });
+  container.appendChild(stats);
+
+  c.access.forEach((a, i) => {
+    const card = el("div",{class:"surface",style:{marginBottom:"12px",padding:"0",overflow:"hidden"}});
+
+    // Card header
+    const cardHdr = el("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"14px 18px",borderBottom:"1px solid var(--border-l)",background:"var(--cream-d)"}});
+    const platformName = el("span",{class:"overview-edit-field",style:{fontWeight:"700",fontSize:"14px",color:"var(--black-s)"}}, a.name||"Platform");
+    platformName.onclick = ()=>makeInlineEdit(platformName,a.name,v=>saveField(c.id,"access",c.access.map((x,j)=>j===i?{...x,name:v}:x)));
+    const cardHdrRight = el("div",{style:{display:"flex",gap:"8px",alignItems:"center"}});
+    const cycleSt = ()=>{ const states=["pending","received","na"]; const next=states[(states.indexOf(a.status||"pending")+1)%3]; saveField(c.id,"access",c.access.map((x,j)=>j===i?{...x,status:next}:x)); };
+    const sb = el("span",{class:`access-badge ${a.status||"pending"}`,onclick:cycleSt}, a.status==="received"?"✓ Received":a.status==="na"?"N/A":"⏳ Pending");
+    sb.style.cursor="pointer";
+    const delBtnA = el("button",{class:"access-del-btn"},`✕`);
+    delBtnA.onclick=()=>{ if(!confirm(`Remove "${a.name}"?`)) return; saveField(c.id,"access",c.access.filter((_,j)=>j!==i)); };
+    cardHdrRight.append(sb,delBtnA); cardHdr.append(platformName,cardHdrRight); card.appendChild(cardHdr);
+
+    // Card body
+    const body = el("div",{style:{padding:"14px 18px"}});
+
+    // URL row
+    if (a.url || true) {
+      const urlRow = el("div",{style:{display:"flex",alignItems:"center",gap:"8px",marginBottom:"12px",flexWrap:"wrap"}});
+      const urlLbl = el("span",{style:{fontSize:"9px",fontWeight:"700",color:"var(--ink-muted)",letterSpacing:"0.1em",textTransform:"uppercase",minWidth:"60px"}},"Login URL");
+      if (a.url) {
+        const urlLink = el("a",{href:a.url,target:"_blank",style:{fontSize:"12px",color:"#1e40af",textDecoration:"none",fontFamily:"var(--ff-mono)"}},a.url.length>55?a.url.slice(0,55)+"…":a.url);
+        const editUrlBtn = el("button",{class:"access-copy-btn",style:{fontSize:"10px"}},`✏`);
+        editUrlBtn.onclick=()=>makeInlineEdit(urlLink,a.url,v=>saveField(c.id,"access",c.access.map((x,j)=>j===i?{...x,url:v}:x)));
+        urlRow.append(urlLbl,urlLink,editUrlBtn);
+      } else {
+        const urlSpan = el("span",{class:"overview-edit-field",style:{fontSize:"12px",color:"var(--ink-muted)",fontFamily:"var(--ff-mono)"}},"— Add URL");
+        urlSpan.onclick=()=>makeInlineEdit(urlSpan,a.url||"",v=>saveField(c.id,"access",c.access.map((x,j)=>j===i?{...x,url:v}:x)));
+        urlRow.append(urlLbl,urlSpan);
+      }
+      body.appendChild(urlRow);
+    }
+
+    // Credentials row
+    const credRow = el("div",{style:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"12px",marginBottom:a.extras?.length||a.notes?"12px":"0"}});
+
+    // Username
+    const userCell = el("div",{style:{background:"var(--cream-d)",borderRadius:"8px",padding:"10px 14px"}});
+    userCell.innerHTML = `<div style="font-size:9px;font-weight:700;color:var(--ink-muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px">Username / Email</div>`;
+    const userWrap = el("div",{style:{display:"flex",alignItems:"center",gap:"6px"}});
+    const uText = el("span",{class:"overview-edit-field",style:{fontSize:"13px",fontFamily:"var(--ff-mono)",color:a.username?"var(--black-s)":"var(--ink-muted)"}},a.username||"— Add");
+    uText.onclick=()=>makeInlineEdit(uText,a.username||"",v=>saveField(c.id,"access",c.access.map((x,j)=>j===i?{...x,username:v}:x)));
+    userWrap.appendChild(uText);
+    if(a.username){ const cp=el("button",{class:"access-copy-btn"},`⎘`); cp.onclick=(e)=>{e.stopPropagation();navigator.clipboard.writeText(a.username);showToast("Copied ✓");}; userWrap.appendChild(cp); }
+    userCell.appendChild(userWrap); credRow.appendChild(userCell);
+
+    // Password
+    const passCell = el("div",{style:{background:"var(--cream-d)",borderRadius:"8px",padding:"10px 14px"}});
+    passCell.innerHTML = `<div style="font-size:9px;font-weight:700;color:var(--ink-muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px">Password</div>`;
+    const pwWrap = el("div",{style:{display:"flex",alignItems:"center",gap:"6px"}});
+    let pwVisible = false;
+    const pwText = el("span",{class:"overview-edit-field",style:{fontSize:"13px",fontFamily:"var(--ff-mono)",color:a.password?"var(--black-s)":"var(--ink-muted)"}},a.password?"••••••••":"— Add");
+    const eyeBtn = a.password ? el("button",{class:"access-copy-btn"},"👁") : null;
+    if(eyeBtn){ eyeBtn.onclick=(e)=>{e.stopPropagation(); pwVisible=!pwVisible; pwText.textContent=pwVisible?a.password:"••••••••"; eyeBtn.textContent=pwVisible?"🙈":"👁";}; }
+    pwText.onclick=()=>{ pwVisible=false; if(eyeBtn)eyeBtn.textContent="👁"; makeInlineEdit(pwText,a.password||"",v=>saveField(c.id,"access",c.access.map((x,j)=>j===i?{...x,password:v}:x))); };
+    pwWrap.appendChild(pwText);
+    if(eyeBtn) pwWrap.appendChild(eyeBtn);
+    if(a.password){ const cp=el("button",{class:"access-copy-btn"},`⎘`); cp.onclick=(e)=>{e.stopPropagation();navigator.clipboard.writeText(a.password);showToast("Copied ✓");}; pwWrap.appendChild(cp); }
+    passCell.appendChild(pwWrap); credRow.appendChild(passCell);
+    body.appendChild(credRow);
+
+    // Extra fields (additional IDs/keys)
+    if (a.extras && a.extras.length) {
+      const extrasRow = el("div",{style:{display:"flex",flexWrap:"wrap",gap:"8px",marginBottom:"10px"}});
+      a.extras.forEach((ex,ei)=>{
+        const exCell = el("div",{style:{background:"var(--cream-d)",borderRadius:"8px",padding:"8px 12px",flex:"1",minWidth:"150px"}});
+        exCell.innerHTML = `<div style="font-size:9px;font-weight:700;color:var(--ink-muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:4px">${ex.key}</div>`;
+        const exWrap = el("div",{style:{display:"flex",alignItems:"center",gap:"5px"}});
+        const exVal = el("span",{class:"overview-edit-field",style:{fontSize:"12px",fontFamily:"var(--ff-mono)",color:"var(--black-s)"}},ex.val);
+        exVal.onclick=()=>makeInlineEdit(exVal,ex.val,v=>{ const newExtras=(a.extras||[]).map((x,j)=>j===ei?{...x,val:v}:x); saveField(c.id,"access",c.access.map((x,j)=>j===i?{...x,extras:newExtras}:x)); });
+        const cpEx=el("button",{class:"access-copy-btn"},`⎘`); cpEx.onclick=(e)=>{e.stopPropagation();navigator.clipboard.writeText(ex.val);showToast("Copied ✓");};
+        exWrap.append(exVal,cpEx); exCell.appendChild(exWrap); extrasRow.appendChild(exCell);
+      });
+      body.appendChild(extrasRow);
+    }
+
+    // Notes
+    if (a.notes || true) {
+      const notesRow = el("div",{style:{marginTop:"4px"}});
+      const notesSpan = el("span",{class:"overview-edit-field",style:{fontSize:"11px",color:a.notes?"var(--ink-mid)":"var(--ink-muted)"}},a.notes||"Add note…");
+      notesSpan.onclick=()=>makeInlineEdit(notesSpan,a.notes||"",v=>saveField(c.id,"access",c.access.map((x,j)=>j===i?{...x,notes:v}:x)));
+      notesRow.appendChild(notesSpan); body.appendChild(notesRow);
+    }
+
+    card.appendChild(body);
+    container.appendChild(card);
   });
-  table.appendChild(tbody); wrap.appendChild(table); container.appendChild(wrap);
-  container.appendChild(el("div",{style:{fontSize:"11px",color:"var(--ink-muted)"}},"Click any field to edit inline · ⎘ copies to clipboard · Saves automatically."));
+
+  container.appendChild(el("div",{style:{fontSize:"10px",color:"var(--ink-muted)",textAlign:"center",marginTop:"8px"}},`Click any field to edit inline · ⎘ copies · 👁 reveals password · Saves automatically`));
 }
 
 // ─── RETAINER ────────────────────────────────
 const BILLING_CYCLES = ["monthly","quarterly","annual","custom"];
 const RENEWAL_STATUSES = ["renewing","at-risk","churned","paused","unknown"];
 const RET_SERVICES = ["Content Creation","WhatsApp Automation","Web Development","Paid Ads","Funnel Build","Branding","Consulting","CRM Automation","SEO & Content"];
-const RET_DEL_TYPES = ["Posts","Reels","Stories","Videos","Blogs","Ads","Emails","Pages","Campaigns","Reports","Assets","Hours","Sessions","Other"];
-const RET_DEL_UNITS = ["posts","reels","stories","videos","blogs","ads","emails","pages","campaigns","reports","assets","hours","sessions","items"];
+const RET_DEL_TYPES = [
+  "Posts","Reels","Stories","Videos","Blogs","Ads","Emails","Pages","Campaigns","Reports","Assets","Hours","Sessions",
+  "Static Website","Sales Funnel Website","Shopify Dashboard","Business Dashboard","CRM Dashboard","E-Commerce Website",
+  "Inbound & Outbound Voice Agent","Chatbot / Voice Bot","n8n Workflow","System 3","Outreach Bot","Lead Capturing System",
+  "Other"
+];
+const RET_DEL_UNITS = ["posts","reels","stories","videos","blogs","ads","emails","pages","campaigns","reports","assets","hours","sessions","items","websites","automations","workflows","bots","agents","systems"];
 
 function renderRetainer(c, container) {
   const ret = c.retainer || defaultRetainer();
@@ -4493,8 +5446,13 @@ $("btn-edit-save").onclick=()=>{
 // ADD CLIENT MODAL
 // ═══════════════════════════════════════════════
 const ALL_SERVICES = ["Content Creation","WhatsApp Automation","Web Development","Paid Ads","Funnel Build","Branding","Consulting","CRM Automation","SEO & Content"];
-const DEL_TYPES_MODAL = ["Posts","Reels","Stories","Videos","Blogs","Ads","Emails","Pages","Campaigns","Reports","Assets","Hours","Sessions","Other"];
-const DEL_UNITS_MODAL = ["posts","reels","stories","videos","blogs","ads","emails","pages","campaigns","reports","assets","hours","sessions","items"];
+const DEL_TYPES_MODAL = [
+  "Posts","Reels","Stories","Videos","Blogs","Ads","Emails","Pages","Campaigns","Reports","Assets","Hours","Sessions",
+  "Static Website","Sales Funnel Website","Shopify Dashboard","Business Dashboard","CRM Dashboard","E-Commerce Website",
+  "Inbound & Outbound Voice Agent","Chatbot / Voice Bot","n8n Workflow","System 3","Outreach Bot","Lead Capturing System",
+  "Other"
+];
+const DEL_UNITS_MODAL = ["posts","reels","stories","videos","blogs","ads","emails","pages","campaigns","reports","assets","hours","sessions","items","websites","automations","workflows","bots","agents","systems"];
 let modalDeliverables = [];
 
 function renderModalDelRows() {
