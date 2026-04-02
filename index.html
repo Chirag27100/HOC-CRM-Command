@@ -4705,14 +4705,47 @@ function renderFeedback(c, container) {
 }
 
 // ─── DELIVERABLES ─────────────────────────────
-const DEL_TYPES  = ["Marketing","Social Media","AI Automation","Websites"];
-const DEL_UNITS_MAP = {
-  "Marketing": ["campaigns","ads","emails","pages","blogs","reports","assets","hours","sessions"],
-  "Social Media": ["posts","reels","stories","videos","campaigns","ads","assets","hours"],
-  "AI Automation": ["bots","agents","workflows","automations","systems","hours"],
-  "Websites": ["websites","pages","items","sessions","hours"]
+// ─── SERVICE HIERARCHY (Service → Deliverables) ───────────────────────────────
+const DEL_SERVICES = {
+  "Marketing": [
+    "copywriting",
+    "google campaigns",
+    "meta ad campaigns",
+    "email sequences",
+    "content strategy",
+    "brand messaging"
+  ],
+  "AI Automation": [
+    "inbound voice agent",
+    "outbound voice agent",
+    "chatbots and voicebots",
+    "lead capture tool",
+    "system 3",
+    "linkedin sales navigator"
+  ],
+  "Website": [
+    "static website",
+    "sales funnel website",
+    "business website",
+    "shopify dashboard",
+    "crm dashboards"
+  ],
+  "Content Creation +Social Media": [
+    "posts",
+    "reels",
+    "full length videos",
+    "insta swipes"
+  ]
 };
-const DEL_UNITS  = ["posts","reels","stories","videos","blogs","ads","emails","pages","campaigns","reports","assets","hours","sessions","items","websites","automations","workflows","bots","agents","systems"];
+
+const DEL_TYPES  = Object.keys(DEL_SERVICES);
+const DEL_UNITS_MAP = {
+  "Marketing": ["campaigns","ads","copies","sequences","docs","hours","items"],
+  "AI Automation": ["agents","bots","systems","workflows","items","hours"],
+  "Website": ["websites","pages","dashboards","items","hours"],
+  "Content Creation +Social Media": ["posts","reels","videos","swipes","items","hours"]
+};
+const DEL_UNITS  = ["campaigns","ads","copies","sequences","docs","hours","items","agents","bots","systems","workflows","websites","pages","dashboards","posts","reels","videos","swipes"];
 
 function renderDeliverables(c, container) {
   const hdr = el("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"16px"}});
@@ -4723,39 +4756,79 @@ function renderDeliverables(c, container) {
 
   const addForm = el("div",{class:"surface",style:{marginBottom:"14px",padding:"14px 16px",display:"none"}});
   addForm.innerHTML = `<div style="font-size:10px;font-weight:700;color:var(--ink-muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px">New Deliverable</div>`;
-  const newRow = el("div",{style:{display:"grid",gridTemplateColumns:"2fr 1fr 1fr 1fr 1fr auto",gap:"8px",alignItems:"end"}});
-  const nName = el("input",{class:"del-edit-input",type:"text",placeholder:"Name"});
-  const nType = el("select",{class:"del-edit-input"}); DEL_TYPES.forEach(t=>{const o=el("option",{value:t},t);nType.appendChild(o);});
+  const newRow = el("div",{style:{display:"grid",gridTemplateColumns:"1fr 1.2fr 1.2fr 0.8fr 0.8fr 1fr auto",gap:"8px",alignItems:"end"}});
+  
+  // Service dropdown
+  const nService = el("select",{class:"del-edit-input"}); 
+  nService.appendChild(el("option",{value:""},"Select Service"));
+  DEL_TYPES.forEach(s=>{const o=el("option",{value:s},s);nService.appendChild(o);});
+  
+  // Deliverable dropdown
+  const nDeliverable = el("select",{class:"del-edit-input"}); 
+  nDeliverable.appendChild(el("option",{value:""},"Select Deliverable"));
+  
+  // Update deliverable options based on service selection
+  nService.addEventListener("change", () => {
+    nDeliverable.innerHTML = "";
+    nDeliverable.appendChild(el("option",{value:""},"Select Deliverable"));
+    if (nService.value && DEL_SERVICES[nService.value]) {
+      DEL_SERVICES[nService.value].forEach(d=>{
+        const o=el("option",{value:d},d);
+        nDeliverable.appendChild(o);
+      });
+    }
+  });
+  
   const nProm = el("input",{class:"del-edit-input",type:"number",placeholder:"Promised",min:0,value:0});
   const nDel  = el("input",{class:"del-edit-input",type:"number",placeholder:"Delivered",min:0,value:0});
+  
+  // Plus/Minus buttons for Delivered
+  const delBtnWrap = el("div",{style:{display:"flex",gap:"4px",alignItems:"center"}});
+  const delMinus = el("button",{style:{width:"28px",height:"28px",padding:"0",fontSize:"14px",border:"1px solid var(--rule)",background:"transparent",cursor:"pointer",borderRadius:"3px"}},`−`);
+  const delPlus = el("button",{style:{width:"28px",height:"28px",padding:"0",fontSize:"14px",border:"1px solid var(--rule)",background:"transparent",cursor:"pointer",borderRadius:"3px"}},`+`);
+  delMinus.onclick = () => { nDel.value = Math.max(0, parseInt(nDel.value || 0) - 1); };
+  delPlus.onclick = () => { nDel.value = Math.min(parseInt(nProm.value || 1), parseInt(nDel.value || 0) + 1); };
+  delBtnWrap.append(delMinus, nDel, delPlus);
+  
+  // Plus/Minus buttons for Promised
+  const promBtnWrap = el("div",{style:{display:"flex",gap:"4px",alignItems:"center"}});
+  const promMinus = el("button",{style:{width:"28px",height:"28px",padding:"0",fontSize:"14px",border:"1px solid var(--rule)",background:"transparent",cursor:"pointer",borderRadius:"3px"}},`−`);
+  const promPlus = el("button",{style:{width:"28px",height:"28px",padding:"0",fontSize:"14px",border:"1px solid var(--rule)",background:"transparent",cursor:"pointer",borderRadius:"3px"}},`+`);
+  promMinus.onclick = () => { nProm.value = Math.max(1, parseInt(nProm.value || 1) - 1); };
+  promPlus.onclick = () => { nProm.value = parseInt(nProm.value || 0) + 1; };
+  promBtnWrap.append(promMinus, nProm, promPlus);
+  
   const nUnit = el("select",{class:"del-edit-input"}); 
   
-  // Function to update units based on type
-  const updateUnitsDropdown = (typeVal) => {
+  // Function to update units based on service
+  const updateUnitsDropdown = (serviceVal) => {
     nUnit.innerHTML = "";
-    const units = DEL_UNITS_MAP[typeVal] || DEL_UNITS;
+    const units = DEL_UNITS_MAP[serviceVal] || DEL_UNITS;
     units.forEach(u=>{const o=el("option",{value:u},u);nUnit.appendChild(o);});
   };
   
-  // Initialize with first type's units
-  updateUnitsDropdown(DEL_TYPES[0]);
-  
-  // Update units when type changes
-  nType.addEventListener("change", () => {
-    updateUnitsDropdown(nType.value);
+  // Update units when service changes
+  nService.addEventListener("change", () => {
+    updateUnitsDropdown(nService.value);
   });
+  
+  // Initialize with first service's units
+  if (DEL_TYPES.length > 0) {
+    updateUnitsDropdown(DEL_TYPES[0]);
+  }
+  
   const nSave = el("button",{class:"remark-log-btn",style:{fontSize:"11px",padding:"8px 14px"}},`Add`);
   nSave.onclick = () => {
-    if (!nName.value.trim()) return;
+    if (!nService.value.trim() || !nDeliverable.value.trim()) return;
     const prom = parseInt(nProm.value)||1;
     const del_ = Math.min(parseInt(nDel.value)||0, prom);
-    const newD = {id:"d"+uid(),name:nName.value.trim(),type:nType.value,promised:prom,delivered:del_,unit:nUnit.value,status:del_===0?"pending":del_>=prom?"done":"in-progress"};
-    nName.value=""; nProm.value=0; nDel.value=0; addForm.style.display="none";
+    const newD = {id:"d"+uid(),name:nDeliverable.value.trim(),type:nService.value,promised:prom,delivered:del_,unit:nUnit.value,status:del_===0?"pending":del_>=prom?"done":"in-progress"};
+    nService.value=""; nDeliverable.value=""; nProm.value=0; nDel.value=0; addForm.style.display="none";
     saveField(c.id,"deliverables",[...c.deliverables,newD]);
   };
-  [nName,nType,nProm,nDel,nUnit,nSave].forEach(x=>newRow.appendChild(x));
+  [nService, nDeliverable, promBtnWrap, delBtnWrap, nUnit, nSave].forEach(x=>newRow.appendChild(x));
   addForm.appendChild(newRow); container.appendChild(addForm);
-  addBtn.onclick=()=>{ addForm.style.display=addForm.style.display==="none"?"block":"none"; if(addForm.style.display==="block") nName.focus(); };
+  addBtn.onclick=()=>{ addForm.style.display=addForm.style.display==="none"?"block":"none"; if(addForm.style.display==="block") nService.focus(); };
 
   const wrap = el("div",{class:"surface",style:{padding:"0",overflow:"hidden",marginBottom:"16px"}});
   const table = el("table",{class:"del-table"});
@@ -4772,7 +4845,23 @@ function renderDeliverables(c, container) {
       nameSpan.onclick=()=>makeInlineEdit(nameSpan,d.name,v=>{ saveField(c.id,"deliverables",c.deliverables.map(x=>x.id===d.id?{...x,name:v}:x)); });
       td1.appendChild(nameSpan); tr.appendChild(td1);
       const td1b=el("td",{style:{fontSize:"11px",color:"var(--ink-muted)"}}); const typeSpan=el("span",{class:"overview-edit-field"},d.type);
-      typeSpan.onclick=()=>{ const sel=el("select",{class:"count-input",style:{width:"110px"}}); DEL_TYPES.forEach(t=>{const o=el("option",{value:t},t); if(t===d.type) o.selected=true; sel.appendChild(o);}); typeSpan.replaceWith(sel); sel.focus(); const commit=()=>{ sel.replaceWith(typeSpan); typeSpan.textContent=sel.value; saveField(c.id,"deliverables",c.deliverables.map(x=>x.id===d.id?{...x,type:sel.value}:x)); }; sel.addEventListener("blur",commit); sel.addEventListener("change",commit); };
+      typeSpan.onclick=()=>{ 
+        const sel=el("select",{class:"count-input",style:{width:"110px"}}); 
+        DEL_TYPES.forEach(t=>{
+          const o=el("option",{value:t},t); 
+          if(t===d.type) o.selected=true; 
+          sel.appendChild(o);
+        }); 
+        typeSpan.replaceWith(sel); 
+        sel.focus(); 
+        const commit=()=>{ 
+          sel.replaceWith(typeSpan); 
+          typeSpan.textContent=sel.value; 
+          saveField(c.id,"deliverables",c.deliverables.map(x=>x.id===d.id?{...x,type:sel.value}:x)); 
+        }; 
+        sel.addEventListener("blur",commit); 
+        sel.addEventListener("change",commit); 
+      };
       td1b.appendChild(typeSpan); tr.appendChild(td1b);
       const td2=el("td"); const badge=makePill(d.status,d.status==="done"?"pill-green":d.status==="in-progress"?"pill-amber":"pill-muted",true); badge.style.cursor="pointer";
       badge.onclick=()=>{ const states=["pending","in-progress","done"]; const next=states[(states.indexOf(d.status)+1)%3]; saveField(c.id,"deliverables",c.deliverables.map(x=>x.id===d.id?{...x,status:next}:x)); };
@@ -4782,11 +4871,35 @@ function renderDeliverables(c, container) {
       const countSpan=el("span",{class:"count-edit"},`${d.delivered} / ${d.promised} ${d.unit}`);
       countSpan.onclick=()=>{
         const wrap2=el("div",{style:{display:"flex",gap:"4px",alignItems:"center",justifyContent:"center"}});
-        const inp=el("input",{class:"count-input",type:"number",min:0,value:d.delivered,style:{width:"52px"}});
-        const inp2=el("input",{class:"count-input",type:"number",min:1,value:d.promised,style:{width:"52px"}});
-        wrap2.append(inp," / ",inp2); td4.innerHTML=""; td4.appendChild(wrap2); inp.focus();
-        const commit=()=>{ const prom=Math.max(1,parseInt(inp2.value)||1); const v=Math.max(0,Math.min(prom,parseInt(inp.value)||0)); const status=v===0?"pending":v>=prom?"done":"in-progress"; saveField(c.id,"deliverables",c.deliverables.map(x=>x.id===d.id?{...x,delivered:v,promised:prom,status}:x)); };
-        [inp,inp2].forEach(i=>{ i.addEventListener("blur",commit); i.addEventListener("keydown",e=>{ if(e.key==="Enter")commit(); if(e.key==="Escape"){td4.innerHTML="";td4.appendChild(countSpan);} }); });
+        const inp=el("input",{class:"count-input",type:"number",min:0,value:d.delivered,style:{width:"40px"}});
+        const inpMinus=el("button",{style:{width:"24px",height:"24px",padding:"0",fontSize:"12px",border:"1px solid var(--rule)",background:"transparent",cursor:"pointer",borderRadius:"2px"}},`−`);
+        const inpPlus=el("button",{style:{width:"24px",height:"24px",padding:"0",fontSize:"12px",border:"1px solid var(--rule)",background:"transparent",cursor:"pointer",borderRadius:"2px"}},`+`);
+        inpMinus.onclick = (e) => { e.stopPropagation(); inp.value = Math.max(0, parseInt(inp.value || 0) - 1); };
+        inpPlus.onclick = (e) => { e.stopPropagation(); inp.value = Math.min(parseInt(inp2.value || 1), parseInt(inp.value || 0) + 1); };
+        
+        const inp2=el("input",{class:"count-input",type:"number",min:1,value:d.promised,style:{width:"40px"}});
+        const inp2Minus=el("button",{style:{width:"24px",height:"24px",padding:"0",fontSize:"12px",border:"1px solid var(--rule)",background:"transparent",cursor:"pointer",borderRadius:"2px"}},`−`);
+        const inp2Plus=el("button",{style:{width:"24px",height:"24px",padding:"0",fontSize:"12px",border:"1px solid var(--rule)",background:"transparent",cursor:"pointer",borderRadius:"2px"}},`+`);
+        inp2Minus.onclick = (e) => { e.stopPropagation(); inp2.value = Math.max(1, parseInt(inp2.value || 1) - 1); };
+        inp2Plus.onclick = (e) => { e.stopPropagation(); inp2.value = parseInt(inp2.value || 0) + 1; };
+        
+        wrap2.append(inpMinus, inp, inpPlus, " / ", inp2Minus, inp2, inp2Plus); 
+        td4.innerHTML=""; 
+        td4.appendChild(wrap2); 
+        inp.focus();
+        const commit=()=>{ 
+          const prom=Math.max(1,parseInt(inp2.value)||1); 
+          const v=Math.max(0,Math.min(prom,parseInt(inp.value)||0)); 
+          const status=v===0?"pending":v>=prom?"done":"in-progress"; 
+          saveField(c.id,"deliverables",c.deliverables.map(x=>x.id===d.id?{...x,delivered:v,promised:prom,status}:x)); 
+        };
+        [inp,inp2].forEach(i=>{ 
+          i.addEventListener("blur",commit); 
+          i.addEventListener("keydown",e=>{ 
+            if(e.key==="Enter")commit(); 
+            if(e.key==="Escape"){td4.innerHTML="";td4.appendChild(countSpan);} 
+          }); 
+        });
       };
       td4.appendChild(countSpan); tr.appendChild(td4);
       const left=d.promised-d.delivered;
