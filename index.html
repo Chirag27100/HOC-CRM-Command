@@ -301,8 +301,8 @@ body {
 /* TOPBAR */
 .top {
   height: 52px;
-  background: var(--bg);
-  border-bottom: 1px solid var(--border2);
+  background: var(--beige);
+  border-bottom: 1px solid var(--beige3);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -329,7 +329,7 @@ body {
 .top-date { color: var(--text-dim); }
 .signout-btn {
   background: none;
-  border: 1px solid var(--border2);
+  border: 1px solid var(--beige3);
   border-radius: 2px;
   color: var(--text-mid);
   font-family: 'Geist', sans-serif;
@@ -347,8 +347,8 @@ body {
 .sidebar {
   width: 188px;
   min-width: 188px;
-  background: var(--bg2);
-  border-right: 1px solid var(--border2);
+  background: #1a1714;
+  border-right: none;
   display: flex;
   flex-direction: column;
   padding: 20px 0;
@@ -359,7 +359,7 @@ body {
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 1.8px;
-  color: var(--text-dim);
+  color: rgba(240,236,226,0.35);
   padding: 12px 20px 6px;
 }
 .nb {
@@ -370,7 +370,7 @@ body {
   cursor: pointer;
   border: none;
   background: none;
-  color: var(--text-mid);
+  color: rgba(240,236,226,0.55);
   font-family: 'Geist', sans-serif;
   font-size: 12.5px;
   font-weight: 400;
@@ -380,13 +380,13 @@ body {
   border-left: 2px solid transparent;
   letter-spacing: 0.1px;
 }
-.nb:hover { color: var(--text); background: rgba(0,0,0,0.04); }
+.nb:hover { color: rgba(240,236,226,0.85); background: rgba(240,236,226,0.05); }
 .nb.active {
-  color: var(--text);
-  background: rgba(0,0,0,0.06);
+  color: #f0ece2;
+  background: rgba(240,236,226,0.08);
   border-left-color: var(--beige4);
 }
-.ni { font-size: 13px; opacity: 0.7; width: 18px; text-align: center; }
+.ni { font-size: 13px; opacity: 0.6; width: 18px; text-align: center; }
 .nbadge {
   margin-left: auto;
   background: #c94535;
@@ -952,6 +952,63 @@ tbody tr:hover td { background: rgba(0,0,0,0.02); }
 /* DIVIDER */
 .divider { height: 1px; background: var(--border2); margin: 24px 0; }
 
+/* ── OVERDUE ROW ── */
+tr.row-overdue td { background: rgba(201,69,53,0.04) !important; }
+tr.row-overdue:hover td { background: rgba(201,69,53,0.07) !important; }
+
+/* ── BULK ACTION BAR ── */
+#bulkBar {
+  display: none; position: sticky; top: 0; z-index: 20;
+  background: var(--text); color: var(--bg);
+  padding: 10px 22px; border-radius: 2px;
+  align-items: center; gap: 14px; margin-bottom: 12px;
+  font-size: 12px; font-weight: 500;
+}
+#bulkBar.visible { display: flex; }
+#bulkBar select {
+  background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 2px; color: #fff; font-family:'Geist',sans-serif; font-size:11px;
+  padding: 5px 10px; outline:none; cursor:pointer;
+}
+#bulkBar .btn-bulk-apply {
+  background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 2px; color: #fff; font-family:'Geist',sans-serif; font-size:11px;
+  font-weight:600; padding: 5px 14px; cursor:pointer; transition:background 0.15s;
+}
+#bulkBar .btn-bulk-apply:hover { background: rgba(255,255,255,0.25); }
+#bulkBar .btn-bulk-clear { background:none; border:none; color:rgba(255,255,255,0.5); cursor:pointer; font-size:13px; margin-left:auto; }
+#bulkBar .btn-bulk-clear:hover { color:#fff; }
+.row-cb { width:32px; text-align:center; }
+.pipe-cb { cursor:pointer; width:14px; height:14px; accent-color:var(--beige4); }
+
+/* ── QUICK LOG PANEL ── */
+.ql-panel {
+  background: var(--bg2); border-top: 1px solid var(--border2);
+  padding: 10px 16px 12px; display:none;
+}
+.ql-panel.open { display:block; }
+.ql-ta {
+  width:100%; background:var(--bg3); border:1px solid var(--border2);
+  border-radius:2px; color:var(--text); font-family:'Geist',sans-serif;
+  font-size:12px; padding:8px 10px; outline:none; resize:none; min-height:56px;
+  transition:border-color 0.15s;
+}
+.ql-ta:focus { border-color:var(--beige4); }
+.ql-actions { display:flex; gap:8px; margin-top:7px; align-items:center; }
+.ql-char { font-size:10px; color:var(--text-dim); margin-left:auto; font-family:'Geist Mono',monospace; }
+
+/* ── SOURCE MINI BAR ── */
+.src-bar { display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid var(--border); }
+.src-bar:last-child { border-bottom:none; }
+.src-name { font-size:12px; color:var(--text2); width:90px; flex-shrink:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.src-track { flex:1; height:4px; background:var(--bg4); border-radius:2px; overflow:hidden; }
+.src-fill { height:100%; border-radius:2px; background:var(--beige4); transition:width 0.4s; }
+.src-meta { font-family:'Geist Mono',monospace; font-size:10px; color:var(--text-dim); width:80px; text-align:right; white-space:nowrap; }
+
+/* ── WEIGHTED TOTAL ROW ── */
+.weighted-total-row { background:var(--bg2) !important; }
+.weighted-total-row td { font-weight:600; color:var(--text) !important; border-top:1px solid var(--border2) !important; }
+
 @media (max-width: 960px) {
   .two-col, .three-col, .c2 { grid-template-columns: 1fr; }
   .ks { grid-template-columns: repeat(3, 1fr); }
@@ -1052,13 +1109,22 @@ tbody tr:hover td { background: rgba(0,0,0,0.02); }
             </div>
           </div>
 
-          <!-- ALERTS -->
-          <div class="card">
-            <div class="card-head">
-              <span class="card-title">Alerts & Actions</span>
-              <span id="alertC" style="font-family:'Geist Mono',monospace;font-size:10px;color:#c94535;"></span>
+          <!-- ALERTS + SOURCE -->
+          <div style="display:flex;flex-direction:column;gap:20px;">
+            <div class="card">
+              <div class="card-head">
+                <span class="card-title">Alerts & Actions</span>
+                <span id="alertC" style="font-family:'Geist Mono',monospace;font-size:10px;color:#c94535;"></span>
+              </div>
+              <div id="insList" style="max-height:220px;overflow-y:auto;"></div>
             </div>
-            <div id="insList" style="max-height:300px;overflow-y:auto;"></div>
+            <div class="card">
+              <div class="card-head">
+                <span class="card-title">Lead Source Breakdown</span>
+                <span style="font-size:10px;color:var(--text-dim);">by won revenue</span>
+              </div>
+              <div id="srcMini" style="padding:8px 20px 12px;"></div>
+            </div>
           </div>
         </div>
 
@@ -1107,17 +1173,36 @@ tbody tr:hover td { background: rgba(0,0,0,0.02); }
           </div>
         </div>
         <div class="ks" id="pipeKS"></div>
+
+        <!-- BULK ACTION BAR -->
+        <div id="bulkBar">
+          <span id="bulkCount">0 selected</span>
+          <span style="color:rgba(255,255,255,0.4);font-size:10px;">Move to stage:</span>
+          <select id="bulkStage">
+            <option value="">— pick stage —</option>
+            <option>Lead</option><option>Qualified</option><option>Proposal</option>
+            <option>Negotiation</option><option>Closed Won</option><option>Closed Lost</option>
+          </select>
+          <button class="btn-bulk-apply" onclick="applyBulkStage()">Apply →</button>
+          <button class="btn-bulk-clear" onclick="clearBulkSelect()" title="Clear selection">✕</button>
+        </div>
+
         <div class="card">
           <div class="card-head">
             <span class="card-title">All Leads</span>
-            <span id="pipeCount" style="font-family:'Geist Mono',monospace;font-size:11px;color:var(--text-mid);"></span>
+            <div style="display:flex;align-items:center;gap:14px;">
+              <span id="weightedTotal" style="font-family:'Geist Mono',monospace;font-size:11px;color:#3a9962;"></span>
+              <span id="pipeCount" style="font-family:'Geist Mono',monospace;font-size:11px;color:var(--text-mid);"></span>
+              <span id="fuBadge" style="font-family:'Geist Mono',monospace;font-size:10px;color:#c94535;"></span>
+            </div>
           </div>
           <div class="tw">
             <table>
               <thead><tr>
-                <th>Deal · Client</th><th>Service</th><th>Value / Expected</th><th>Stage</th>
+                <th class="row-cb"><input type="checkbox" class="pipe-cb" id="cbAll" onchange="toggleAllCb(this.checked)" title="Select all"></th>
+                <th>Deal · Client</th><th>Service</th><th>Value · Weighted</th><th>Stage</th>
                 <th>Prob%</th><th>Next Action</th><th>Close Date</th><th>Follow-up</th><th>Priority</th>
-                <th>Age</th><th>Risk</th><th style="text-align:right">Actions</th>
+                <th>Age · In Stage</th><th>Risk</th><th style="text-align:right">Actions</th>
               </tr></thead>
               <tbody id="pipeBody"></tbody>
             </table>
@@ -1313,6 +1398,18 @@ tbody tr:hover td { background: rgba(0,0,0,0.02); }
   <div class="mf"><button class="btn ghost" onclick="closeM('mLead')">Cancel</button><button class="btn primary" onclick="saveLead()">Save Lead</button></div>
 </div></div>
 
+<!-- ══════ MODAL: QUICK LOG ══════ -->
+<div class="ov" id="mQuickLog"><div class="modal" style="max-width:480px;">
+  <div class="mh"><h3 id="mQLT">Log Note</h3><button class="mc" onclick="closeM('mQuickLog')">✕</button></div>
+  <div class="mb">
+    <div style="font-size:11px;color:var(--text-dim);margin-bottom:12px;" id="mQLSub"></div>
+    <div class="ff"><label>Note / Update</label><textarea id="ql_note" placeholder="e.g. Called, no answer. Will retry Thursday. Client seemed interested in full package." style="min-height:100px;"></textarea></div>
+    <div class="ff" style="margin-top:12px;"><label>Next Action (optional update)</label><input id="ql_action" placeholder="Leave blank to keep existing"></div>
+    <div class="ff" style="margin-top:12px;"><label>Next Follow-up Date (optional update)</label><input type="date" id="ql_followup"></div>
+  </div>
+  <div class="mf"><button class="btn ghost" onclick="closeM('mQuickLog')">Cancel</button><button class="btn primary" onclick="saveQuickLog()">Log It →</button></div>
+</div></div>
+
 <!-- ══════ MODAL: MONTH ══════ -->
 <div class="ov" id="mMonth"><div class="modal">
   <div class="mh"><h3 id="mMT">Add Monthly Target</h3><button class="mc" onclick="closeM('mMonth')">✕</button></div>
@@ -1353,7 +1450,9 @@ tbody tr:hover td { background: rgba(0,0,0,0.02); }
 // ═══════════════════════════════════
 const SUPA_URL = 'https://flrhsigjonhipchydipb.supabase.co';
 const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZscmhzaWdqb25oaXBjaHlkaXBiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3MTMzMDksImV4cCI6MjA5MDI4OTMwOX0.7ZXmQfqqooOMhtgSo96Wg7Mf4tsSKedEm3RLKLPHMnI';
-const sb = supabase.createClient(SUPA_URL, SUPA_KEY);
+const sb = supabase.createClient(SUPA_URL, SUPA_KEY, {
+  auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false }
+});
 
 let authed = false;
 let currentUser = null;
@@ -1412,20 +1511,6 @@ async function signOut() {
 // Enter key on auth
 document.getElementById('authPin').addEventListener('keydown', e => { if (e.key === 'Enter') doAuth(); });
 document.getElementById('authUser').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('authPin').focus(); });
-
-// Check existing session on load
-(async () => {
-  const { data: { session } } = await sb.auth.getSession();
-  if (session) {
-    currentUser = session.user;
-    authed = true;
-    document.getElementById('authScreen').style.display = 'none';
-    document.getElementById('app').classList.add('visible');
-    await loadAllData();
-    startRealtime();
-    renderAll();
-  }
-})();
 
 // ═══════════════════════════════════
 //  DATA STORE — Supabase + Real-time
@@ -2021,13 +2106,18 @@ async function saveLead() {
 
   const prevLead = eId.lead ? leads.find(x => x.id === eId.lead) : null;
   const prevStage = prevLead?.stage || null;
+  const newStage = document.getElementById('l_stage').value;
+  // Auto-track when lead entered current stage
+  const stageEntered = (prevStage !== newStage || !eId.lead)
+    ? new Date().toISOString()
+    : (prevLead?.stage_entered || new Date().toISOString());
 
   const obj = {
     id: eId.lead || uid(), name, client,
     contact: document.getElementById('l_contact').value.trim(),
     service: document.getElementById('l_service').value,
     value: parseFloat(document.getElementById('l_value').value)||0,
-    stage: document.getElementById('l_stage').value,
+    stage: newStage,
     priority: document.getElementById('l_priority').value,
     source: document.getElementById('l_source').value,
     action: document.getElementById('l_action').value.trim(),
@@ -2037,6 +2127,7 @@ async function saveLead() {
     days: parseInt(document.getElementById('l_days').value)||0,
     risk: document.getElementById('l_risk').value==='true',
     notes: document.getElementById('l_notes').value.trim(),
+    stage_entered: stageEntered,
     created: eId.lead ? leads.find(x=>x.id===eId.lead)?.created : new Date().toISOString()
   };
 
@@ -2099,9 +2190,22 @@ function renderPipeline() {
   );
   const pc = document.getElementById('pipeCount');
   if (pc) pc.textContent = data.length + ' deal' + (data.length!==1?'s':'');
+
+  // Weighted pipeline total (active only)
+  const active = data.filter(l => !['Closed Won','Closed Lost'].includes(l.stage));
+  const weightedSum = active.reduce((s,l) => s + Math.round(l.value*(l.probability||50)/100), 0);
+  const wt = document.getElementById('weightedTotal');
+  if (wt) wt.textContent = active.length ? fN(weightedSum) + ' weighted' : '';
+
+  // Follow-up overdue count
+  const today0 = new Date(); today0.setHours(0,0,0,0);
+  const fuOverdue = data.filter(l => l.followup && new Date(l.followup)<today0 && !['Closed Won','Closed Lost'].includes(l.stage));
+  const fuBadge = document.getElementById('fuBadge');
+  if (fuBadge) fuBadge.textContent = fuOverdue.length ? fuOverdue.length + ' follow-up' + (fuOverdue.length>1?'s':'')+' overdue' : '';
+
   const tbody = document.getElementById('pipeBody');
   if (!data.length) {
-    tbody.innerHTML = '<tr><td colspan="12"><div class="empty"><div class="ei">→</div>No leads found.</div></td></tr>';
+    tbody.innerHTML = '<tr><td colspan="13"><div class="empty"><div class="ei">→</div>No leads found.</div></td></tr>';
     return;
   }
   const pO = {High:0,Medium:1,Low:2};
@@ -2109,29 +2213,53 @@ function renderPipeline() {
     if (a.risk !== b.risk) return a.risk ? -1 : 1;
     return (pO[a.priority]||1)-(pO[b.priority]||1);
   });
+
   tbody.innerHTML = sorted.map(l => {
     const age = dealAge(l);
+    const daysInStage = l.stage_entered
+      ? Math.floor((new Date() - new Date(l.stage_entered)) / 86400000)
+      : (l.days || 0);
     const prob = l.probability !== undefined ? l.probability : 50;
     const weighted = Math.round(l.value * prob / 100);
     const cd = l.closedate ? new Date(l.closedate).toLocaleDateString('en-IN',{day:'numeric',month:'short'}) : '—';
     const od = l.closedate && new Date(l.closedate)<new Date() && !['Closed Won','Closed Lost'].includes(l.stage);
     const fu = l.followup ? new Date(l.followup).toLocaleDateString('en-IN',{day:'numeric',month:'short'}) : '—';
-    const fuOd = l.followup && new Date(l.followup)<new Date() && !['Closed Won','Closed Lost'].includes(l.stage);
-    return `<tr>
+    const fuOd = l.followup && new Date(l.followup)<today0 && !['Closed Won','Closed Lost'].includes(l.stage);
+    const rowClass = fuOd ? 'row-overdue' : '';
+    const stageVelocityColor = daysInStage > 21 ? '#c94535' : daysInStage > 10 ? '#c07d28' : 'var(--text-dim)';
+    const probColor = prob >= 70 ? '#3a9962' : prob >= 40 ? 'var(--text-mid)' : '#c94535';
+
+    return `<tr class="${rowClass}" data-id="${l.id}">
+      <td class="row-cb"><input type="checkbox" class="pipe-cb row-check" data-id="${l.id}" onchange="onRowCbChange()" ${selectedLeadIds.has(l.id)?'checked':''}></td>
       <td><div style="font-weight:500;color:var(--text);">${esc(l.name)}</div><div style="font-size:10px;color:var(--text-mid);margin-top:2px;">${esc(l.client)}${l.contact?' · '+esc(l.contact):''}</div></td>
       <td style="font-size:11px;color:var(--text-mid)">${l.service||'—'}</td>
       <td style="font-family:'Geist Mono',monospace;font-weight:500;">${fN(l.value)}<div style="font-size:9px;color:#3a9962;">${fN(weighted)} exp</div></td>
       <td><span class="badge b-${sk(l.stage)}">${l.stage}</span></td>
-      <td style="font-family:'Geist Mono',monospace;font-size:11px;">${prob}%</td>
+      <td style="font-family:'Geist Mono',monospace;font-size:12px;color:${probColor};font-weight:500;">${prob}%</td>
       <td style="font-size:11px;color:var(--text-mid);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${l.action||'—'}</td>
       <td style="font-family:'Geist Mono',monospace;font-size:11px;color:${od?'#c94535':'var(--text-mid)'};">${cd}</td>
-      <td style="font-family:'Geist Mono',monospace;font-size:11px;color:${fuOd?'#c94535':'var(--text-mid)'};">${fu}</td>
+      <td style="font-family:'Geist Mono',monospace;font-size:11px;">
+        <span style="color:${fuOd?'#c94535':'var(--text-mid)'};">${fu}</span>
+        ${fuOd ? '<span style="font-size:9px;color:#c94535;display:block;font-weight:600;">OVERDUE</span>' : ''}
+      </td>
       <td><span class="badge b-${sk(l.priority)}">${l.priority}</span></td>
-      <td style="font-family:'Geist Mono',monospace;font-size:11px;color:${age>30?'#c94535':'var(--text-mid)'};">${age}d</td>
+      <td style="font-family:'Geist Mono',monospace;font-size:11px;">
+        <span style="color:${age>30?'#c94535':'var(--text-mid)'};">${age}d total</span>
+        <div style="font-size:10px;color:${stageVelocityColor};margin-top:2px;">${daysInStage}d in stage</div>
+      </td>
       <td style="font-size:13px;">${l.risk?'<span style="color:#c94535">⚠</span>':'<span style="color:var(--text-dim)">—</span>'}</td>
-      <td style="text-align:right;"><div style="display:flex;gap:5px;justify-content:flex-end;"><button class="btn xs" onclick="openLeadM('${l.id}')">Edit</button><button class="btn xs danger" onclick="delLead('${l.id}')">Del</button></div></td>
+      <td style="text-align:right;">
+        <div style="display:flex;gap:5px;justify-content:flex-end;">
+          <button class="btn xs ghost" onclick="openQuickLog('${l.id}')" title="Log a note">✎ Log</button>
+          <button class="btn xs" onclick="openLeadM('${l.id}')">Edit</button>
+          <button class="btn xs danger" onclick="delLead('${l.id}')">Del</button>
+        </div>
+      </td>
     </tr>`;
   }).join('');
+
+  // Restore checkbox state
+  syncCbAll();
 }
 
 // ═══════════════════════════════════
@@ -2703,6 +2831,148 @@ function renderConcentration() {
 }
 
 
+// ═══════════════════════════════════
+//  BULK STAGE MOVE
+// ═══════════════════════════════════
+let selectedLeadIds = new Set();
+
+function onRowCbChange() {
+  selectedLeadIds = new Set(
+    [...document.querySelectorAll('.row-check:checked')].map(cb => cb.dataset.id)
+  );
+  syncBulkBar();
+  syncCbAll();
+}
+
+function toggleAllCb(checked) {
+  document.querySelectorAll('.row-check').forEach(cb => {
+    cb.checked = checked;
+    if (checked) selectedLeadIds.add(cb.dataset.id);
+    else selectedLeadIds.delete(cb.dataset.id);
+  });
+  syncBulkBar();
+}
+
+function syncCbAll() {
+  const all = document.querySelectorAll('.row-check');
+  const cbAll = document.getElementById('cbAll');
+  if (cbAll && all.length) {
+    cbAll.checked = all.length > 0 && [...all].every(cb => cb.checked);
+    cbAll.indeterminate = [...all].some(cb => cb.checked) && !cbAll.checked;
+  }
+}
+
+function syncBulkBar() {
+  const bar = document.getElementById('bulkBar');
+  const cnt = document.getElementById('bulkCount');
+  if (!bar) return;
+  if (selectedLeadIds.size > 0) {
+    bar.classList.add('visible');
+    if (cnt) cnt.textContent = selectedLeadIds.size + ' selected';
+  } else {
+    bar.classList.remove('visible');
+  }
+}
+
+function clearBulkSelect() {
+  selectedLeadIds.clear();
+  document.querySelectorAll('.row-check').forEach(cb => cb.checked = false);
+  const cbAll = document.getElementById('cbAll');
+  if (cbAll) { cbAll.checked = false; cbAll.indeterminate = false; }
+  syncBulkBar();
+}
+
+async function applyBulkStage() {
+  const stage = document.getElementById('bulkStage')?.value;
+  if (!stage) { showToast('Pick a stage first', 'error'); return; }
+  if (!selectedLeadIds.size) return;
+  const ids = [...selectedLeadIds];
+  const now = new Date().toISOString();
+  let ok = 0;
+  for (const id of ids) {
+    const lead = leads.find(l => l.id === id);
+    if (!lead) continue;
+    const prevStage = lead.stage;
+    const updated = { ...lead, stage, stage_entered: prevStage !== stage ? now : (lead.stage_entered || now) };
+    const saved = await sbUpsert('leads', updated);
+    if (saved) { leads = leads.map(l => l.id === id ? { ...updated, user_id: currentUser.id } : l); ok++; }
+  }
+  showToast(`${ok} deal${ok!==1?'s':''} moved to ${stage}`, 'success');
+  clearBulkSelect();
+  renderAll();
+}
+
+// ═══════════════════════════════════
+//  QUICK LOG NOTE
+// ═══════════════════════════════════
+let _qlLeadId = null;
+
+function openQuickLog(id) {
+  const l = leads.find(x => x.id === id);
+  if (!l) return;
+  _qlLeadId = id;
+  document.getElementById('mQLT').textContent = 'Log Note — ' + esc(l.name);
+  document.getElementById('mQLSub').textContent = l.client + (l.stage ? ' · ' + l.stage : '');
+  document.getElementById('ql_note').value = '';
+  document.getElementById('ql_action').value = '';
+  document.getElementById('ql_followup').value = '';
+  openM('mQuickLog');
+  setTimeout(() => document.getElementById('ql_note').focus(), 80);
+}
+
+async function saveQuickLog() {
+  const note = document.getElementById('ql_note').value.trim();
+  if (!note) { showToast('Note cannot be empty', 'error'); return; }
+  const l = leads.find(x => x.id === _qlLeadId);
+  if (!l) return;
+  const action = document.getElementById('ql_action').value.trim();
+  const followup = document.getElementById('ql_followup').value || null;
+  const ts = new Date().toLocaleString('en-IN', {day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+  const logLine = `[${ts}] ${note}`;
+  const updated = {
+    ...l,
+    notes: l.notes ? l.notes + '\n' + logLine : logLine,
+    action: action || l.action,
+    followup: followup || l.followup
+  };
+  const ok = await sbUpsert('leads', updated);
+  if (!ok) return;
+  leads = leads.map(x => x.id === _qlLeadId ? { ...updated, user_id: currentUser.id } : x);
+  showToast('Note logged ✓', 'success');
+  closeM('mQuickLog');
+  renderAll();
+}
+
+// ═══════════════════════════════════
+//  SOURCE MINI BREAKDOWN (Dashboard)
+// ═══════════════════════════════════
+function renderSrcMini() {
+  const el = document.getElementById('srcMini');
+  if (!el) return;
+  const map = {};
+  leads.forEach(l => {
+    const s = l.source || 'Unknown';
+    if (!map[s]) map[s] = { leads:0, won:0, wonVal:0 };
+    map[s].leads++;
+    if (l.stage === 'Closed Won') { map[s].won++; map[s].wonVal += l.value; }
+  });
+  const sorted = Object.entries(map).sort((a,b) => b[1].wonVal - a[1].wonVal);
+  if (!sorted.length) {
+    el.innerHTML = '<div class="empty" style="padding:12px 0 4px;">No leads yet.</div>';
+    return;
+  }
+  const maxV = Math.max(...sorted.map(([,v]) => v.wonVal), 1);
+  el.innerHTML = sorted.map(([src, d]) => {
+    const wr = d.leads ? Math.round(d.won/d.leads*100) : 0;
+    const fill = Math.round(d.wonVal/maxV*100);
+    return `<div class="src-bar">
+      <span class="src-name" title="${esc(src)}">${esc(src)}</span>
+      <div class="src-track"><div class="src-fill" style="width:${fill}%;"></div></div>
+      <span class="src-meta">${d.leads}L · ${wr}% wr</span>
+    </div>`;
+  }).join('');
+}
+
 function renderAll() {
   if (!authed) return;
 
@@ -2725,6 +2995,7 @@ function renderAll() {
   renderClients();
   renderActivityLog();
   renderIntel();
+  renderSrcMini();
   setTimeout(renderCharts, 60);
 
   // Badge — at-risk pipeline
@@ -2734,7 +3005,7 @@ function renderAll() {
   const rk = leads.filter(l=>l.risk&&!['Closed Won','Closed Lost'].includes(l.stage)).length;
   if (rk > 0 && nb) { const b=document.createElement('span'); b.className='nbadge'; b.textContent=rk; nb.appendChild(b); }
 
-  // Badge — follow-ups overdue
+  // Badge — follow-ups overdue (show on pipeline nav)
   const today = new Date(); today.setHours(0,0,0,0);
   const fuDue = leads.filter(l => l.followup && new Date(l.followup) < today && !['Closed Won','Closed Lost'].includes(l.stage)).length;
   const intelNb = document.getElementById('nb-intel');
@@ -2857,7 +3128,7 @@ if (el) el.textContent = h < 12 ? 'Good morning, Chirag' : h < 17 ? 'Good aftern
 
   /* ── CLIENT RECORD ── */
   #record { flex: 1; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
-  .rec-header { background: var(--card); border-bottom: 1px solid var(--border); padding: 20px 28px 0; flex-shrink: 0; }
+  .rec-header { background: var(--cream); border-bottom: 1px solid var(--border); padding: 20px 28px 0; flex-shrink: 0; }
   .rec-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 12px; }
   .rec-health-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
   .rec-health-label { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
@@ -2878,11 +3149,12 @@ if (el) el.textContent = h < 12 ? 'Good morning, Chirag' : h < 17 ? 'Good aftern
   .del-strip-bar { height: 4px; background: var(--cream-dd); border-radius: 2px; }
   .del-strip-bar-fill { height: 100%; border-radius: 2px; transition: width 0.3s; }
   .del-strip-count { font-size: 9px; color: var(--ink-muted); margin-top: 3px; font-family: var(--ff-mono); }
-  .rec-tabs { display: flex; gap: 0; margin-top: 16px; }
-  .rec-tab { padding: 9px 20px; font-size: 13px; font-weight: 400; color: var(--ink-muted); background: transparent; border: none; cursor: pointer; font-family: var(--ff-sans); border-bottom: 2px solid transparent; text-transform: capitalize; transition: all 0.12s; }
-  .rec-tab.active { font-weight: 600; color: var(--black-s); border-bottom-color: var(--black-s); }
+  .rec-tabs { display: flex; gap: 0; margin-top: 16px; background: var(--cream); }
+  .rec-tab { padding: 9px 18px; font-size: 12px; font-weight: 500; color: var(--ink-muted); background: transparent; border: none; cursor: pointer; font-family: var(--ff-sans); border-bottom: 2px solid transparent; text-transform: capitalize; transition: all 0.12s; letter-spacing: 0.01em; }
+  .rec-tab:hover { color: var(--black-s); background: rgba(0,0,0,0.03); }
+  .rec-tab.active { font-weight: 700; color: var(--black-s); border-bottom-color: var(--black-s); }
   .rec-tab.retainer-tab.active { color: var(--blue); border-bottom-color: var(--blue); }
-  .rec-content { flex: 1; overflow-y: auto; padding: 24px 28px; }
+  .rec-content { flex: 1; overflow-y: auto; padding: 24px 28px; background: var(--cream-d); }
   .rec-content::-webkit-scrollbar { width: 3px; }
   .rec-content::-webkit-scrollbar-thumb { background: var(--cream-dd); }
   .delete-btn { font-size: 11px; color: var(--red); background: transparent; border: 1px solid rgba(192,57,43,0.2); border-radius: 6px; padding: 5px 12px; cursor: pointer; font-family: var(--ff-sans); }
@@ -3268,22 +3540,18 @@ if (el) el.textContent = h < 12 ? 'Good morning, Chirag' : h < 17 ? 'Good aftern
 <script>
 // ═══════════════════════════════════════════════
 // SUPABASE CONFIG
-// persistSession: false  → never writes the JWT to localStorage,
-// so every new tab/window starts unauthenticated and must log in again.
 // ═══════════════════════════════════════════════
 const SUPA_URL = "https://tyfvvoygrpouqhkczkbb.supabase.co";
 const SUPA_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR5ZnZ2b3lncnBvdXFoa2N6a2JiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM1NjAzOTUsImV4cCI6MjA4OTEzNjM5NX0.tLZd6vmzW42aikbP-UamC2wkCrNMmRoojKCYqWg3GlQ";
 
 const { createClient } = supabase;
-// ─── KEY CHANGE: disable session persistence entirely ───────────────────────
 const supa = createClient(SUPA_URL, SUPA_KEY, {
   auth: {
-    persistSession: false,   // never save the session to localStorage/cookies
-    autoRefreshToken: false, // no background token refresh needed
+    persistSession: false,
+    autoRefreshToken: false,
     detectSessionInUrl: false
   }
 });
-// ────────────────────────────────────────────────────────────────────────────
 
 // ═══════════════════════════════════════════════
 // PAGINATION CONFIG
@@ -3319,8 +3587,6 @@ let pendingPatches = {};
 // AUTH
 // ═══════════════════════════════════════════════
 async function initAuth() {
-  // With persistSession:false there will never be a stored session,
-  // so we always show the login screen on load.
   $("login-screen").style.display = "flex";
 }
 
